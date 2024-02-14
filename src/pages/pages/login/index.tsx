@@ -40,6 +40,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 
 interface State {
+  email: string
   password: string
   showPassword: boolean
 }
@@ -65,8 +66,14 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
 const LoginPage = () => {
   // ** State
   const [values, setValues] = useState<State>({
+    email: '',
     password: '',
     showPassword: false
+  })
+
+  const [error, setError] = useState({
+    email: false,
+    password: false
   })
 
   // ** Hook
@@ -75,6 +82,7 @@ const LoginPage = () => {
 
   const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [prop]: event.target.value })
+    setError({ ...error, [prop]: false })
   }
 
   const handleClickShowPassword = () => {
@@ -83,6 +91,37 @@ const LoginPage = () => {
 
   const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
+  }
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    console.log('')
+
+    let hasError = false
+
+    // Check and set error for email
+    if (values.email === '') {
+      setError(prevError => ({ ...prevError, email: true }))
+      hasError = true
+    } else {
+      setError(prevError => ({ ...prevError, email: false }))
+    }
+
+    // Check and set error for password
+    if (values.password === '') {
+      setError(prevError => ({ ...prevError, password: true }))
+      hasError = true
+    } else {
+      setError(prevError => ({ ...prevError, password: false }))
+    }
+
+    // If there are errors, you might want to return early or perform additional actions
+    if (hasError) {
+      return
+    }
+    console.log(values)
+    console.log('error', error)
   }
 
   return (
@@ -168,8 +207,20 @@ const LoginPage = () => {
             </Typography>
             <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
           </Box>
-          <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-            <TextField autoFocus fullWidth id='email' label='Email' sx={{ marginBottom: 4 }} />
+          <form noValidate autoComplete='off' onSubmit={handleLogin}>
+            <TextField
+              autoFocus
+              fullWidth
+              type='email'
+              id='email'
+              name='email'
+              value={values.email}
+              onChange={handleChange('email')}
+              label='Email'
+              sx={{ marginBottom: 4 }}
+              required
+              error={error.email}
+            />
             <FormControl fullWidth>
               <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
               <OutlinedInput
@@ -178,6 +229,8 @@ const LoginPage = () => {
                 id='auth-login-password'
                 onChange={handleChange('password')}
                 type={values.showPassword ? 'text' : 'password'}
+                required
+                error={error.password}
                 endAdornment={
                   <InputAdornment position='end'>
                     <IconButton
@@ -205,7 +258,8 @@ const LoginPage = () => {
               size='large'
               variant='contained'
               sx={{ marginBottom: 7 }}
-              onClick={() => router.push('/')}
+              type='submit'
+              // onClick={() => router.push('/')}
             >
               Login
             </Button>
