@@ -8,7 +8,7 @@ async function getUser(user: User | null | undefined): Promise<User | null> {
   if (!user) return null
   const response = await fetch(`/api/users/${user.user.id}`, {
     headers: {
-      Authorization: `Bearer ${user.accessToken}`
+      Authorization: `Bearer ${user?.token?.accessToken}`
     }
   })
   if (!response.ok) throw new ResponseError('Failed on get user request', response)
@@ -17,7 +17,12 @@ async function getUser(user: User | null | undefined): Promise<User | null> {
 }
 
 export interface User {
-  accessToken: string
+  message: string
+  success: boolean
+  token: {
+    accessToken: string
+    refreshToken: string
+  }
   user: {
     email: string
     id: number

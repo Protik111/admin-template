@@ -1,51 +1,20 @@
-import { UseMutateFunction, useMutation, useQueryClient } from 'react-query'
-import { useSnackbar } from 'notistack'
-import { QUERY_KEY } from '../../constants/queryKeys'
-import { ResponseError } from '../../utils/Errors/ResponseError'
 import { User } from './useUser'
+import axios from 'src/@core/lib/axios/axios'
 
-export async function signIn(email: string, password: string): Promise<User> {
-  const response = await fetch('/api/admin/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email, password })
-  })
-  if (!response.ok) throw new ResponseError('Failed on sign in request', response)
+export async function signIn(email: string, password: string): Promise<User | any> {
+  const data = {
+    email: email,
+    password: password
+  }
 
-  return await response.json()
-}
-
-type IUseSignIn = UseMutateFunction<
-  User,
-  unknown,
-  {
-    email: string
-    password: string
-  },
-  unknown
->
-
-export function useSignIn(): IUseSignIn {
-  const queryClient = useQueryClient()
-  //   const navigate = useNavigate()
-  const { enqueueSnackbar } = useSnackbar()
-
-  const { mutate: signInMutation } = useMutation<User, unknown, { email: string; password: string }, unknown>(
-    ({ email, password }) => signIn(email, password),
-    {
-      onSuccess: data => {
-        queryClient.setQueryData([QUERY_KEY.user], data)
-        // navigate('/')
-      },
-      onError: error => {
-        enqueueSnackbar('Ops.. Error on sign in. Try again!', {
-          variant: 'error'
-        })
-      }
+  try {
+    const response = await axios.post('/api/admin/login', data)
+    if (response.status === 200) {
+      return await response.data
+    } else {
+      console.log('Sign in error')
     }
-  )
-
-  return signInMutation
+  } catch (error) {
+    console.log('Sign in error')
+  }
 }

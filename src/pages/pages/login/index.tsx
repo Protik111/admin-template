@@ -38,6 +38,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
+import { userSignIn } from 'src/@core/lib/react-query/auth/authQueries'
 
 interface State {
   email: string
@@ -78,7 +79,9 @@ const LoginPage = () => {
 
   // ** Hook
   const theme = useTheme()
-  const router = useRouter()
+
+  // ** Query Hooks
+  const { mutate: signIn, isLoading, isError } = userSignIn()
 
   const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [prop]: event.target.value })
@@ -95,8 +98,6 @@ const LoginPage = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-
-    console.log('')
 
     let hasError = false
 
@@ -117,11 +118,9 @@ const LoginPage = () => {
     }
 
     // If there are errors, you might want to return early or perform additional actions
-    if (hasError) {
-      return
+    if (!hasError && typeof values.email === 'string' && typeof values.password === 'string') {
+      signIn({ email: values.email, password: values.password })
     }
-    console.log(values)
-    console.log('error', error)
   }
 
   return (
