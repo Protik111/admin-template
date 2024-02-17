@@ -1,5 +1,7 @@
+import { useContext } from 'react'
 import { useQuery, UseQueryResult } from 'react-query'
 import { QUERY_KEY } from 'src/@core/constants/queryKeys'
+import { AuthContext } from 'src/@core/context/authContext'
 import { userService } from 'src/@core/services/user/userService'
 import { User } from 'src/@core/services/user/useUser'
 
@@ -8,6 +10,27 @@ interface IUseUser {
 }
 
 export const useUser = () => {
+  //auth context
+  const authContext = useContext(AuthContext) || {
+    loading: true,
+    authState: {
+      token: '',
+      user: {
+        userId: '',
+        email: '',
+        firstName: '',
+        lastName: '',
+        role: ''
+      }
+    },
+    isUserAuthenticated: () => false,
+    setAuthState: data => data
+  }
+
+  const setUserData = authContext.setAuthState
+
+  // console.log('authState', authContext.authState)
+
   const {
     data: user,
     error,
@@ -26,7 +49,20 @@ export const useUser = () => {
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
-      refetchOnReconnect: false
+      refetchOnReconnect: false,
+      onSuccess: data => {
+        const userData = {
+          userId: data?.user?.userId.toString() || '',
+          email: data?.user?.email || '',
+          firstName: data?.user?.firstName || '',
+          lastName: data?.user?.lastName || '',
+          role: data?.user?.role || ''
+        }
+
+        // setUserData({ data: { token: authContext.authState.token, user: userData } })
+        console.log(userData, 'userData')
+        console.log('authState block', authContext.authState)
+      }
     }
   )
 

@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import Cookies from 'js-cookie'
 import { User } from 'src/@core/services/auth/useSignIn'
+import { useUser } from '../user/userQueries'
 
 //auth queries
 export const userSignIn = () => {
@@ -20,7 +21,6 @@ export const userSignIn = () => {
       onSuccess: data => {
         // queryClient.setQueryData([QUERY_KEY.user], data)
         if (process.env.NEXT_PUBLIC_AUTH_TOKEN_NAME && data && data?.token) {
-          // Set the token in cookies
           Cookies.set(process.env.NEXT_PUBLIC_AUTH_TOKEN_NAME, data?.token?.accessToken, { expires: 7 })
         }
         router.push('/')

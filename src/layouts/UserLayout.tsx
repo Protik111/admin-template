@@ -33,10 +33,24 @@ const UserLayout = ({ children }: Props) => {
 
   const { isLoading, data, isError, error } = useUser()
 
-  console.log('isLoading, data, isError, error', isLoading, data, isError, error)
+  // console.log('isLoading, data, isError, error', isLoading, data, isError, error)
 
-  //auth hooks
-  const authContext = useContext(AuthContext) || { loading: true, isUserAuthenticated: () => false }
+  //auth context
+  const authContext = useContext(AuthContext) || {
+    loading: true,
+    authState: {
+      token: '',
+      user: {
+        userId: '',
+        email: '',
+        firstName: '',
+        lastName: '',
+        role: ''
+      }
+    },
+    isUserAuthenticated: () => false,
+    setAuthState: data => data
+  }
 
   const loading = authContext.loading
   const isAuthenticated = authContext.isUserAuthenticated()
