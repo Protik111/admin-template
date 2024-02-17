@@ -1,7 +1,8 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode, useContext } from 'react'
 
 // ** MUI Imports
+import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
 import { Theme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -19,6 +20,7 @@ import VerticalAppBarContent from './components/vertical/AppBarContent'
 
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
+import { AuthContext } from 'src/@core/context/authContext'
 
 interface Props {
   children: ReactNode
@@ -27,6 +29,14 @@ interface Props {
 const UserLayout = ({ children }: Props) => {
   // ** Hooks
   const { settings, saveSettings } = useSettings()
+
+  //auth hooks
+  const authContext = useContext(AuthContext) || { loading: true, isUserAuthenticated: () => false }
+
+  const loading = authContext.loading
+  const isAuthenticated = authContext.isUserAuthenticated()
+
+  // let loading = false
 
   /**
    *  The below variable will hide the current layout menu at given screen size.
@@ -53,26 +63,34 @@ const UserLayout = ({ children }: Props) => {
   }
 
   return (
-    <VerticalLayout
-      hidden={hidden}
-      settings={settings}
-      saveSettings={saveSettings}
-      verticalNavItems={VerticalNavItems()} // Navigation Items
-      afterVerticalNavMenuContent={UpgradeToProImg}
-      verticalAppBarContent={(
-        props // AppBar Content
-      ) => (
-        <VerticalAppBarContent
+    <>
+      {loading || !isAuthenticated ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <VerticalLayout
           hidden={hidden}
           settings={settings}
           saveSettings={saveSettings}
-          toggleNavVisibility={props.toggleNavVisibility}
-        />
+          verticalNavItems={VerticalNavItems()} // Navigation Items
+          afterVerticalNavMenuContent={UpgradeToProImg}
+          verticalAppBarContent={(
+            props // AppBar Content
+          ) => (
+            <VerticalAppBarContent
+              hidden={hidden}
+              settings={settings}
+              saveSettings={saveSettings}
+              toggleNavVisibility={props.toggleNavVisibility}
+            />
+          )}
+        >
+          {children}
+          <UpgradeToProButton />
+        </VerticalLayout>
       )}
-    >
-      {children}
-      <UpgradeToProButton />
-    </VerticalLayout>
+    </>
   )
 }
 
