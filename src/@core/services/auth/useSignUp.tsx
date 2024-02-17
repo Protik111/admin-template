@@ -3,7 +3,7 @@ import { useSnackbar } from 'notistack'
 import { useNavigate } from 'react-router-dom'
 import { QUERY_KEY } from '../constants/queryKeys'
 import { ResponseError } from '../utils/Errors/ResponseError'
-import { User } from './useUser'
+import { User } from '../user/useUser'
 
 async function signUp(email: string, password: string): Promise<User> {
   const response = await fetch('/api/auth/signup', {

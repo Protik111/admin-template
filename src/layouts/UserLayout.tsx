@@ -21,6 +21,7 @@ import VerticalAppBarContent from './components/vertical/AppBarContent'
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
 import { AuthContext } from 'src/@core/context/authContext'
+import { useUser } from 'src/@core/lib/react-query/user/userQueries'
 
 interface Props {
   children: ReactNode
@@ -29,6 +30,10 @@ interface Props {
 const UserLayout = ({ children }: Props) => {
   // ** Hooks
   const { settings, saveSettings } = useSettings()
+
+  const { isLoading, data, isError, error } = useUser()
+
+  console.log('isLoading, data, isError, error', isLoading, data, isError, error)
 
   //auth hooks
   const authContext = useContext(AuthContext) || { loading: true, isUserAuthenticated: () => false }
@@ -87,7 +92,7 @@ const UserLayout = ({ children }: Props) => {
           )}
         >
           {children}
-          <UpgradeToProButton />
+          {/* <UpgradeToProButton /> */}
         </VerticalLayout>
       )}
     </>

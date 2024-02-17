@@ -112,20 +112,20 @@ const UserDropdown = () => {
             Profile
           </Box>
         </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+        {/* <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <EmailOutline sx={{ marginRight: 2 }} />
             Inbox
           </Box>
-        </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+        </MenuItem> */}
+        {/* <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <MessageOutline sx={{ marginRight: 2 }} />
             Chat
           </Box>
-        </MenuItem>
+        </MenuItem> */}
         <Divider />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+        {/* <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <CogOutline sx={{ marginRight: 2 }} />
             Settings
@@ -143,7 +143,7 @@ const UserDropdown = () => {
             FAQ
           </Box>
         </MenuItem>
-        <Divider />
+        <Divider /> */}
         <MenuItem sx={{ py: 2 }} onClick={() => handleDropdownClose('/pages/login')}>
           <LogoutVariant sx={{ marginRight: 2, fontSize: '1.375rem', color: 'text.secondary' }} />
           Logout
