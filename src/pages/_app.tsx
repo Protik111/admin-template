@@ -30,6 +30,8 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 // ** Global css styles
 import '../../styles/globals.css'
 import TanstackProvider from 'src/@core/lib/react-query/TanstackProvider'
+import { AuthProvider } from 'src/@core/context/authContext'
+import { useContext } from 'react'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
@@ -57,7 +59,13 @@ const App = (props: ExtendedAppProps) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
   // Variables
-  const getLayout = Component.getLayout ?? (page => <UserLayout>{page}</UserLayout>)
+  const getLayout =
+    Component.getLayout ??
+    (page => (
+      <AuthProvider>
+        <UserLayout>{page}</UserLayout>
+      </AuthProvider>
+    ))
 
   return (
     <CacheProvider value={emotionCache}>
