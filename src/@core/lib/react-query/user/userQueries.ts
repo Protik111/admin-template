@@ -11,23 +11,23 @@ interface IUseUser {
 
 export const useUser = () => {
   //auth context
-  const authContext = useContext(AuthContext) || {
-    loading: true,
-    authState: {
-      token: '',
-      user: {
-        userId: '',
-        email: '',
-        firstName: '',
-        lastName: '',
-        role: ''
-      }
-    },
-    isUserAuthenticated: () => false,
-    setAuthState: data => data
-  }
+  // const authContext = useContext(AuthContext) || {
+  //   loading: true,
+  //   authState: {
+  //     token: '',
+  //     user: {
+  //       userId: '',
+  //       email: '',
+  //       firstName: '',
+  //       lastName: '',
+  //       role: ''
+  //     }
+  //   },
+  //   isUserAuthenticated: () => false,
+  //   setAuthState: data => data
+  // }
 
-  const setUserData = authContext.setAuthState
+  // const setUserData = authContext.setAuthState
 
   // console.log('authState', authContext.authState)
 
@@ -61,7 +61,7 @@ export const useUser = () => {
 
         // setUserData({ data: { token: authContext.authState.token, user: userData } })
         console.log(userData, 'userData')
-        console.log('authState block', authContext.authState)
+        // console.log('authState block', authContext.authState)
       }
     }
   )

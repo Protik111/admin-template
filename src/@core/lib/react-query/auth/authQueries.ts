@@ -23,7 +23,8 @@ export const userSignIn = () => {
         if (process.env.NEXT_PUBLIC_AUTH_TOKEN_NAME && data && data?.token) {
           Cookies.set(process.env.NEXT_PUBLIC_AUTH_TOKEN_NAME, data?.token?.accessToken, { expires: 7 })
         }
-        router.push('/')
+        // router.push('/')
+        window.location.href = '/'
       },
       onError: error => {
         enqueueSnackbar('Ops.. Error on sign in. Try again!', {

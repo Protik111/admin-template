@@ -2,6 +2,7 @@
 import React, { FC, ReactNode, createContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
+import { useUser } from '../lib/react-query/user/userQueries'
 
 export interface AuthState {
   token: string

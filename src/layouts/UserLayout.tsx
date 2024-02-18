@@ -33,7 +33,7 @@ const UserLayout = ({ children }: Props) => {
 
   const { isLoading, data, isError, error } = useUser()
 
-  // console.log('isLoading, data, isError, error', isLoading, data, isError, error)
+  console.log('user in use layout', isLoading, data, isError, error)
 
   //auth context
   const authContext = useContext(AuthContext) || {

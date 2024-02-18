@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, SyntheticEvent, Fragment } from 'react'
+import { useState, SyntheticEvent, Fragment, useContext } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -24,6 +24,7 @@ import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 import { useUser } from 'src/@core/lib/react-query/user/userQueries'
 import Cookies from 'js-cookie'
+import { AuthContext } from 'src/@core/context/authContext'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({

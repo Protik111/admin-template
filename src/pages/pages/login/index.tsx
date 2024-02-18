@@ -1,5 +1,6 @@
 // ** React Imports
 import { ChangeEvent, MouseEvent, ReactNode, useState } from 'react'
+import CircularProgress from '@mui/material/CircularProgress'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -260,7 +261,7 @@ const LoginPage = () => {
               type='submit'
               // onClick={() => router.push('/')}
             >
-              Login
+              {isLoading ? <CircularProgress size={'16px'} color='info' /> : 'Login'}
             </Button>
             <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
               <Typography variant='body2' sx={{ marginRight: 2 }}>
