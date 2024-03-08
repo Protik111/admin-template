@@ -14,6 +14,7 @@ import { Settings } from 'src/@core/context/settingsContext'
 
 // ** Configs
 import themeConfig from 'src/configs/themeConfig'
+import LogoComp from 'src/@core/components/shared/ImageComp'
 
 interface Props {
   hidden: boolean
@@ -61,7 +62,8 @@ const VerticalNavHeader = (props: Props) => {
       ) : (
         <Link href='/' passHref>
           <StyledLink>
-            <svg
+            <LogoComp />
+            {/* <svg
               width={30}
               height={25}
               version='1.1'
@@ -119,10 +121,10 @@ const VerticalNavHeader = (props: Props) => {
                   </g>
                 </g>
               </g>
-            </svg>
-            <HeaderTitle variant='h6' sx={{ ml: 3 }}>
+            </svg> */}
+            {/* <HeaderTitle variant='h6' sx={{ ml: 3 }}>
               {themeConfig.templateName}
-            </HeaderTitle>
+            </HeaderTitle> */}
           </StyledLink>
         </Link>
       )}

@@ -9,6 +9,7 @@ import CreditCardOutline from 'mdi-material-ui/CreditCardOutline'
 import AccountPlusOutline from 'mdi-material-ui/AccountPlusOutline'
 import AlertCircleOutline from 'mdi-material-ui/AlertCircleOutline'
 import GoogleCirclesExtended from 'mdi-material-ui/GoogleCirclesExtended'
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
@@ -29,16 +30,20 @@ const navigation = (): VerticalNavItemsType => {
       title: 'Blogs',
       icon: AccountCogOutline,
       path: '/blogs'
+    },
+    {
+      sectionTitle: 'Staff/Role Management'
+    },
+    {
+      title: 'Staff List',
+      icon: ManageAccountsIcon,
+      path: '/role/staff'
+    },
+    {
+      title: 'Role Management',
+      icon: ManageAccountsIcon,
+      path: '/role/manage'
     }
-    // {
-    //   sectionTitle: 'Pages'
-    // },
-    // {
-    //   title: 'Login',
-    //   icon: Login,
-    //   path: '/pages/login',
-    //   openInNewTab: true
-    // },
     // {
     //   title: 'Register',
     //   icon: AccountPlusOutline,

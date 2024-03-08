@@ -40,6 +40,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 import { userSignIn } from 'src/@core/lib/react-query/auth/authQueries'
+import LogoComp from 'src/@core/components/shared/ImageComp'
 
 interface State {
   email: string
@@ -129,11 +130,7 @@ const LoginPage = () => {
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
           <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <img
-              style={{ objectFit: 'cover', maxWidth: '100%', width: '200px' }}
-              src='/images/logos/brainsbin-logo-black.png'
-              alt=''
-            />
+            <LogoComp />
             {/* <Typography
               variant='h6'
               sx={{

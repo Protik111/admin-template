@@ -32,10 +32,10 @@ const Dashboard = () => {
         <Grid item xs={12} md={8}>
           <StatisticsCard />
         </Grid>
-        <Grid item xs={12} md={6} lg={4}>
+        {/* <Grid item xs={12} md={6} lg={4}>
           <WeeklyOverview />
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
+        </Grid> */}
+        {/* <Grid item xs={12} md={6} lg={4}>
           <TotalEarning />
         </Grid>
         <Grid item xs={12} md={6} lg={4}>
@@ -86,10 +86,10 @@ const Dashboard = () => {
         </Grid>
         <Grid item xs={12} md={6} lg={4}>
           <SalesByCountries />
-        </Grid>
-        <Grid item xs={12} md={12} lg={8}>
+        </Grid> */}
+        {/* <Grid item xs={12} md={12} lg={8}>
           <DepositWithdraw />
-        </Grid>
+        </Grid> */}
         <Grid item xs={12}>
           <Table />
         </Grid>

@@ -33,8 +33,6 @@ const UserLayout = ({ children }: Props) => {
 
   const { isLoading, data, isError, error } = useUser()
 
-  console.log('user in use layout', isLoading, data, isError, error)
-
   //auth context
   const authContext = useContext(AuthContext) || {
     loading: true,
@@ -93,7 +91,7 @@ const UserLayout = ({ children }: Props) => {
           settings={settings}
           saveSettings={saveSettings}
           verticalNavItems={VerticalNavItems()} // Navigation Items
-          afterVerticalNavMenuContent={UpgradeToProImg}
+          // afterVerticalNavMenuContent={UpgradeToProImg}
           verticalAppBarContent={(
             props // AppBar Content
           ) => (
