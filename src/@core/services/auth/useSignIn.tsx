@@ -1,3 +1,4 @@
+import { enqueueSnackbar } from 'notistack'
 import axiosInstance from 'src/@core/lib/axios/axios'
 export interface User {
   message: string
@@ -26,6 +27,6 @@ export async function signIn(email: string, password: string): Promise<User | an
       console.log('Sign in error')
     }
   } catch (error) {
-    console.log('Sign in error')
+    throw error
   }
 }

@@ -3,35 +3,41 @@ import Grid from '@mui/material/Grid'
 import Table from 'src/views/dashboard/Table'
 import Typography, { TypographyProps } from '@mui/material/Typography'
 import { Button } from '@mui/material'
-import { useState } from 'react'
-import Backdrop from '@mui/material/Backdrop'
-import Modal from '@mui/material/Modal'
-import Fade from '@mui/material/Fade'
-import StaffTable from 'src/views/role/StaffTable'
+import { styled } from '@mui/material/styles'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import IconButton from '@mui/material/IconButton'
+import CloseIcon from '@mui/icons-material/Close'
 
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '20%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '50%',
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4
-}
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2)
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1)
+  }
+}))
+import StaffTable from 'src/views/role/StaffTable'
+import { useState } from 'react'
+import CreateRoleModal from 'src/@core/components/role/CreateRoleModal'
 
 const index = () => {
   const [open, setOpen] = useState(false)
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
 
+  const handleClickOpen = () => {
+    setOpen(true)
+  }
+  const handleClose = () => {
+    setOpen(false)
+  }
   return (
     <>
       <Grid>
         <Grid container justifyContent='space-between' alignItems='center'>
           <Typography variant='h5'>Role Management</Typography>
-          <Button size='large' variant='contained' onClick={handleOpen}>
+          <Button size='large' variant='contained' onClick={handleClickOpen}>
             Add Staff
           </Button>
         </Grid>
@@ -40,31 +46,8 @@ const index = () => {
         </Grid>
       </Grid>
 
-      <Modal
-        aria-labelledby='transition-modal-title'
-        aria-describedby='transition-modal-description'
-        open={open}
-        onClose={handleClose}
-        closeAfterTransition
-        slots={{ backdrop: Backdrop }}
-        slotProps={{
-          backdrop: {
-            timeout: 500
-          }
-        }}
-        sx={{ width: '100%' }}
-      >
-        <Fade in={open}>
-          <Box sx={style}>
-            <Typography id='transition-modal-title' variant='h6' component='h2'>
-              Text in a modal
-            </Typography>
-            <Typography id='transition-modal-description' sx={{ mt: 2 }}>
-              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-            </Typography>
-          </Box>
-        </Fade>
-      </Modal>
+      {/* Role create modal */}
+      <CreateRoleModal open={open} handleClose={handleClose} />
     </>
   )
 }

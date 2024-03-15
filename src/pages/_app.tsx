@@ -32,6 +32,7 @@ import '../../styles/globals.css'
 import TanstackProvider from 'src/@core/lib/react-query/TanstackProvider'
 import { AuthProvider } from 'src/@core/context/authContext'
 import { useContext } from 'react'
+import { SnackbarProvider } from 'notistack'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
@@ -88,6 +89,7 @@ const App = (props: ExtendedAppProps) => {
           </SettingsConsumer>
         </SettingsProvider>
       </TanstackProvider>
+      <SnackbarProvider />
     </CacheProvider>
   )
 }

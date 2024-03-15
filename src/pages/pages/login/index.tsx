@@ -150,7 +150,7 @@ const LoginPage = () => {
             </Typography>
             <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
           </Box> */}
-          <form noValidate autoComplete='off' onSubmit={handleLogin}>
+          <form noValidate onSubmit={handleLogin}>
             <TextField
               autoFocus
               fullWidth
@@ -165,7 +165,7 @@ const LoginPage = () => {
               error={error.email}
             />
             <FormControl fullWidth>
-              <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
+              <InputLabel htmlFor='auth-login-password'>Password *</InputLabel>
               <OutlinedInput
                 label='Password'
                 value={values.password}
