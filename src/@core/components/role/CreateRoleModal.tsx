@@ -31,7 +31,8 @@ import Twitter from 'mdi-material-ui/Twitter'
 import Facebook from 'mdi-material-ui/Facebook'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
-import { ChangeEvent, useState, MouseEvent, ReactNode } from 'react'
+import { ChangeEvent, useState, MouseEvent, ReactNode, useEffect } from 'react'
+import { useAllRole } from 'src/@core/lib/react-query/role/roleQueries'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -86,6 +87,20 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
     console.log('err')
   }
 
+  const { isLoading, isError, data } = useAllRole()
+
+  // console.log('data', data)
+
+  // useEffect(() => {
+  //   if (data && data.roles && data.roles.length > 0) {
+  //     const permissionsArray = data.roles.flatMap((role: any) => Object.keys(role.permissions))
+  //     setValues(prevValues => ({
+  //       ...prevValues,
+  //       permissions: permissionsArray
+  //     }))
+  //   }
+  // }, [data])
+
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword })
   }
@@ -129,7 +144,6 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
             error={error.email}
           />
           <TextField
-            autoFocus
             fullWidth
             type='firstname'
             id='firstname'
@@ -142,7 +156,6 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
             error={error.firstName}
           />
           <TextField
-            autoFocus
             fullWidth
             type='lastName'
             id='lastName'
@@ -191,9 +204,7 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
               onChange={handleChange('permissions')}
               sx={{ marginBottom: 4 }}
             >
-              <MenuItem value='10'>Ten</MenuItem>
-              <MenuItem value='20'>Twenty</MenuItem>
-              <MenuItem value='30'>Thirty</MenuItem>
+              <MenuItem value='"65bfb0846c34d40f8b798b87"'>Admin Role</MenuItem>
             </Select>
           </FormControl>
 
@@ -201,20 +212,19 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
             fullWidth
             size='large'
             variant='contained'
-            sx={{ marginBottom: 7 }}
             type='submit'
             // onClick={() => router.push('/')}
           >
-            TEst
+            Create Role
             {/* {isLoading ? <CircularProgress size={'16px'} color='info' /> : 'Login'} */}
           </Button>
         </form>
       </DialogContent>
-      <DialogActions>
+      {/* <DialogActions>
         <Button autoFocus onClick={handleClose}>
           Save changes
         </Button>
-      </DialogActions>
+      </DialogActions> */}
     </BootstrapDialog>
   )
 }

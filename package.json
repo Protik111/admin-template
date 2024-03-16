@@ -45,8 +45,13 @@
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
+    "@emotion/react": "^11.11.4",
     "@emotion/server": "^11.4.0",
+    "@emotion/styled": "^11.11.0",
+    "@material-ui/icons": "^4.11.3",
+    "@mui/icons-material": "^5.15.13",
     "@mui/lab": "^5.0.0-alpha.70",
+    "@mui/material": "^5.15.13",
     "@popperjs/core": "^2.11.2",
     "apexcharts-clevision": "3.28.5",
     "axios": "^1.6.7",
@@ -66,6 +71,7 @@
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
+    "@types/next": "^9.0.0",
     "@types/node": "16.11.11",
     "@types/nprogress": "^0.2.0",
     "@types/react": "17.0.37",

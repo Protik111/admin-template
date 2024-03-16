@@ -60,7 +60,6 @@ export const useUser = () => {
         }
 
         // setUserData({ data: { token: authContext.authState.token, user: userData } })
-        console.log(userData, 'userData')
         // console.log('authState block', authContext.authState)
       }
     }
