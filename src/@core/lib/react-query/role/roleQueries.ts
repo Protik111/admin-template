@@ -9,12 +9,14 @@ import { enqueueSnackbar } from 'notistack'
 import { AxiosError } from 'axios'
 import { roleService } from 'src/@core/services/role/roleService'
 import { StaffPayload } from 'src/@core/services/role/createStaff'
+import { useCallback } from 'react'
 
 //roll queries
 export const useAllRole = () => {
   const queryClient = useQueryClient()
 
   return useQuery(QUERY_KEYS.GET_ALL_ROLL, roleService.getAllRole, {
+    refetchOnMount: true,
     onSuccess: data => {
       queryClient.setQueryData(QUERY_KEYS.GET_ALL_ROLL, data)
     },
@@ -24,14 +26,15 @@ export const useAllRole = () => {
   })
 }
 
-//roll queries
+//staff queries
 export const useAllStaff = () => {
   const queryClient = useQueryClient()
 
   return useQuery(QUERY_KEYS.GET_ALL_STAFF, roleService.getAllStaffs, {
-    onSuccess: data => {
-      queryClient.setQueryData(QUERY_KEYS.GET_ALL_STAFF, data)
-    },
+    refetchOnWindowFocus: 'always',
+    // onSuccess: data => {
+    //   queryClient.setQueryData(QUERY_KEYS.GET_ALL_STAFF, data)
+    // },
     onError: (error: Error) => {
       console.error('Error fetching staffs:', error.message)
     }
@@ -40,6 +43,8 @@ export const useAllStaff = () => {
 
 //staff queries
 export const useStaffCreate = () => {
+  const queryClient = useQueryClient()
+
   return useMutation<any, unknown, StaffPayload, unknown>(
     payload => {
       return roleService.createStaff(payload)
@@ -50,13 +55,15 @@ export const useStaffCreate = () => {
           enqueueSnackbar('Staff created successfully', {
             variant: 'success'
           })
+          queryClient.invalidateQueries(QUERY_KEYS.GET_ALL_STAFF)
+          // getAllStaffQuery.refetch()
         }
       },
       onError: error => {
         if (error) {
           const axiosError = error as AxiosError<{ errors?: { message: string } }>
           if (error) {
-            enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Error on sign in. Try again!', {
+            enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Password must be at least six characters', {
               variant: 'error'
             })
           }

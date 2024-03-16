@@ -1,3 +1,7 @@
+import { AxiosError } from 'axios'
+import Cookies from 'js-cookie'
+import { useRouter } from 'next/router'
+import { enqueueSnackbar } from 'notistack'
 import { useContext } from 'react'
 import { useQuery, UseQueryResult } from 'react-query'
 import { QUERY_KEY } from 'src/@core/constants/queryKeys'
@@ -10,6 +14,8 @@ interface IUseUser {
 }
 
 export const useUser = () => {
+  const router = useRouter()
+
   //auth context
   // const authContext = useContext(AuthContext) || {
   //   loading: true,
@@ -67,6 +73,17 @@ export const useUser = () => {
 
   if (error) {
     console.log('Error', error)
+    const axiosError = error as AxiosError<{ errors?: { message: string } }>
+    if (error) {
+      enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Error on sign in. Try again!', {
+        variant: 'error'
+      })
+
+      if (process.env.NEXT_PUBLIC_AUTH_TOKEN_NAME) {
+        Cookies.remove(process.env.NEXT_PUBLIC_AUTH_TOKEN_NAME)
+        router.push('/pages/login')
+      }
+    }
   }
 
   return {

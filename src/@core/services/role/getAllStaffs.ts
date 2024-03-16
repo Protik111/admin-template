@@ -4,13 +4,13 @@ export async function getAllStaffs(): Promise<any | null> {
   try {
     const response = await axiosInstance.get('/api/staff/getall')
     if (response.status == 200) {
-      return await response.data
+      return response.data
     } else {
       console.log('Staff fetch error')
       return null
     }
   } catch (error) {
-    console.log('Role in error')
+    console.log('Staff in error')
     return null
   }
 }

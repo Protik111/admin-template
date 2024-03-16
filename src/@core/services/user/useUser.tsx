@@ -20,13 +20,12 @@ export async function getUser(): Promise<User | null> {
   try {
     const response = await axiosInstance.get('/api/user/verify')
     if (response.status === 200) {
-      return await response.data
+      return response.data
     } else {
       console.log('User fetch error')
       return null
     }
   } catch (error) {
-    console.log('Sign in error')
-    return null
+    throw error
   }
 }

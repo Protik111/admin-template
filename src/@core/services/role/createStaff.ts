@@ -13,7 +13,7 @@ export async function createStaff(payload: StaffPayload): Promise<any> {
   try {
     const response = await axiosInstance.post('/api/staff/create', payload)
     if (response.status === 201) {
-      return await response.data
+      return response.data
     } else {
       console.log('Staff creates failed')
     }

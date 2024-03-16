@@ -35,7 +35,7 @@ import Facebook from 'mdi-material-ui/Facebook'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import { ChangeEvent, useState, MouseEvent, ReactNode, useEffect } from 'react'
-import { useAllRole, useStaffCreate } from 'src/@core/lib/react-query/role/roleQueries'
+import { useAllRole, useAllStaff, useStaffCreate } from 'src/@core/lib/react-query/role/roleQueries'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -63,6 +63,8 @@ interface State {
 
 const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
   const { mutate: createStaff, isSuccess } = useStaffCreate()
+  const { isLoading, isError, data, refetch } = useAllStaff()
+
   // ** State
   const [values, setValues] = useState<State>({
     email: '',
@@ -107,6 +109,9 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
   useEffect(() => {
     if (isSuccess) {
       handleClose()
+
+      //calling get all staff refetch function
+      refetch()
     }
   }, [isSuccess])
 
@@ -139,7 +144,7 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
   return (
     <BootstrapDialog onClose={handleClose} aria-labelledby='customized-dialog-title' open={open}>
       <DialogTitle sx={{ m: 0, p: 2 }} id='customized-dialog-title'>
-        Create Role
+        Create Staff
       </DialogTitle>
       <IconButton
         aria-label='close'

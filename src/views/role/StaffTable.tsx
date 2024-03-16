@@ -55,14 +55,18 @@ interface Staff {
 }
 
 const StaffTable = () => {
-  const { isLoading, isError, data } = useAllStaff()
+  const { isLoading, isError, data, isSuccess } = useAllStaff()
   const [staffData, setStaffData] = useState([])
 
-  useEffect(() => {
-    if (data && data.success) {
-      setStaffData(data.staffs)
-    }
-  }, [data])
+  // useEffect(() => {
+  //   if (data && data.success && !staffData.length) {
+  //     setStaffData(data.staffs)
+  //   }
+  // }, [])
+
+  console.log('staffData', staffData)
+
+  console.log('data', data)
 
   const rows: RowType[] = [
     {
@@ -137,7 +141,7 @@ const StaffTable = () => {
                 <LinearProgress />
               </Box>
             ) : (
-              staffData?.map((staff: Staff) => (
+              data?.staffs?.map((staff: Staff) => (
                 <TableRow key={staff?._id} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
                   <TableCell>
                     <Typography sx={{ fontWeight: 500 }}>
@@ -145,7 +149,7 @@ const StaffTable = () => {
                     </Typography>
                   </TableCell>
                   <TableCell>{staff?.user?.email}</TableCell>
-                  <TableCell>{staff?.user?.role}</TableCell>
+                  <TableCell sx={{ textTransform: 'capitalize' }}>{staff?.user?.role}</TableCell>
                   <TableCell>{staff?.user?.phone?.countryCode + staff?.user?.phone?.number}</TableCell>
                   <TableCell>
                     <Button color='error' variant='contained'>
