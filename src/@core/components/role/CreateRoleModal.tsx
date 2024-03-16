@@ -35,7 +35,7 @@ import Facebook from 'mdi-material-ui/Facebook'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import { ChangeEvent, useState, MouseEvent, ReactNode, useEffect } from 'react'
-import { useAllRole, useAllStaff, useStaffCreate } from 'src/@core/lib/react-query/role/roleQueries'
+import { useAllRole, useAllStaff, useStaffCreate, useStaffUpdate } from 'src/@core/lib/react-query/role/roleQueries'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -49,6 +49,8 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 type CreateRoleModalProps = {
   handleClose: () => void
   open: boolean
+  isUpdate?: boolean
+  staffDataUpdate?: any
 }
 
 interface State {
@@ -65,20 +67,23 @@ interface Perm {
   permissions: { name: string; id: string }[]
 }
 
-const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
+const CreateRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: CreateRoleModalProps) => {
   const { isLoading: createStaffLoading, mutate: createStaff, isSuccess } = useStaffCreate()
+  const { isLoading: updateStaffLoading, mutate: updateStaff, isSuccess: updateIsSuccess } = useStaffUpdate()
   const { isLoading, isError, data, refetch } = useAllStaff()
 
   // ** State
   const [values, setValues] = useState<State>({
-    email: '',
+    email: isUpdate ? staffDataUpdate?.user?.email : '',
     password: '',
-    firstName: '',
-    lastName: '',
+    firstName: isUpdate ? staffDataUpdate?.user?.firstName : '',
+    lastName: isUpdate ? staffDataUpdate?.user?.lastName : '',
     showPassword: false,
     permissions: [],
     phone: ''
   })
+
+  console.log('staffDataUpdate from updateModal', staffDataUpdate)
 
   const resetValues = () => {
     setValues({
@@ -91,6 +96,18 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
       phone: ''
     })
   }
+
+  useEffect(() => {
+    setValues({
+      email: isUpdate ? staffDataUpdate?.user?.email : '',
+      password: '',
+      firstName: isUpdate ? staffDataUpdate?.user?.firstName : '',
+      lastName: isUpdate ? staffDataUpdate?.user?.lastName : '',
+      showPassword: false,
+      permissions: [],
+      phone: ''
+    })
+  }, [staffDataUpdate])
 
   const [perm, setPerm] = useState<Perm>({
     permissions: []
@@ -122,8 +139,16 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
       permission: values.permissions,
       password: values.password
     }
-    if (staffData) {
+    if (staffData && !isUpdate) {
       createStaff(staffData)
+    }
+
+    if (staffData && isUpdate) {
+      if (staffDataUpdate?._id) {
+        updateStaff(staffDataUpdate._id, staffData) // Pass the _id property along with staffData
+      } else {
+        console.error('No _id property found in staffDataUpdate')
+      }
     }
   }
 
@@ -138,9 +163,6 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
   }, [isSuccess])
 
   const { isLoading: rolesLoading, isError: rolesError, data: allRoles, isFetched: isFetchedRoll } = useAllRole()
-
-  console.log('allRoles', allRoles)
-  console.log('values', values)
 
   useEffect(() => {
     if (allRoles && allRoles?.roles && allRoles?.roles?.length > 0) {
@@ -166,11 +188,14 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
   return (
     <BootstrapDialog onClose={handleClose} aria-labelledby='customized-dialog-title' open={open}>
       <DialogTitle sx={{ m: 0, p: 2 }} id='customized-dialog-title'>
-        Create Staff
+        {isUpdate ? 'Update Staff' : 'Create Staff'}
       </DialogTitle>
       <IconButton
         aria-label='close'
-        onClick={handleClose}
+        onClick={() => {
+          handleClose()
+          resetValues()
+        }}
         sx={{
           position: 'absolute',
           right: 8,
@@ -245,16 +270,17 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
             />
           </FormControl>
 
-          <FormControl fullWidth>
+          <FormControl fullWidth variant='filled' sx={{ m: 1, minWidth: 120 }}>
             <InputLabel id='permissions'>Role</InputLabel>
             <Select
+              required
               labelId='permissions'
               id='demo-simple-select'
               name='permissions'
               value={values.permissions}
               multiple
               onChange={handleChange('permissions')}
-              sx={{ marginBottom: 4 }}
+              sx={{ marginBottom: 8 }}
             >
               {perm?.permissions?.map(permission => (
                 <MenuItem key={permission.id} value={permission.id}>
@@ -268,17 +294,27 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
             <PhoneInput defaultCountry='bd' value={values.phone} onChange={phone => handleChange('phone')} />
           </FormControl> */}
 
-          <Button
-            fullWidth
-            size='large'
-            variant='contained'
-            type='submit'
-            // onClick={() => router.push('/')}
-          >
-            {createStaffLoading ? <CircularProgress size={22} color='secondary' /> : 'Create Role'}
-
-            {/* {isLoading ? <CircularProgress size={'16px'} color='info' /> : 'Login'} */}
-          </Button>
+          {isUpdate ? (
+            <Button
+              fullWidth
+              size='large'
+              variant='contained'
+              type='submit'
+              // onClick={() => router.push('/')}
+            >
+              {updateStaffLoading ? <CircularProgress size={22} color='secondary' /> : 'Update Staff'}
+            </Button>
+          ) : (
+            <Button
+              fullWidth
+              size='large'
+              variant='contained'
+              type='submit'
+              // onClick={() => router.push('/')}
+            >
+              {createStaffLoading ? <CircularProgress size={22} color='secondary' /> : 'Create Staff'}
+            </Button>
+          )}
         </form>
       </DialogContent>
       {/* <DialogActions>

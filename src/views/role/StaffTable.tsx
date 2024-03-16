@@ -24,6 +24,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
+import CreateRoleModal from 'src/@core/components/role/CreateRoleModal'
 
 interface RowType {
   name: string
@@ -66,9 +67,20 @@ const StaffTable = () => {
   const { isLoading, isError, data, isSuccess, refetch: refetchAllStaff } = useAllStaff()
   const { isLoading: deleteLoading, mutate: staffDelete, isSuccess: deleteSuccess } = useStaffDeletion()
 
-  const [staffData, setStaffData] = useState([])
+  const [staffDataUpdate, setStaffDataUpdate] = useState([])
   const [open, setOpen] = useState(false)
   const [selectedId, setSelectedId] = useState('')
+
+  //modal for edit modal start
+  const [openEditModal, setOpenEditModal] = useState(false)
+  const handleClickOpenEditModal = (staff: any) => {
+    setStaffDataUpdate(staff)
+    setOpenEditModal(true)
+  }
+  const handleCloseEditModal = () => {
+    setOpenEditModal(false)
+  }
+  //modal for edit modal end
 
   const handleClickOpen = (id: string) => {
     setOpen(true)
@@ -182,7 +194,7 @@ const StaffTable = () => {
                       <Button onClick={() => handleClickOpen(staff?.user?.id)} color='error' variant='contained'>
                         <span style={{ color: 'white' }}>Delete</span>
                       </Button>
-                      <Button color='success' variant='contained'>
+                      <Button onClick={() => handleClickOpenEditModal(staff)} color='success' variant='contained'>
                         <span style={{ color: 'white' }}>Update</span>
                       </Button>
                     </Box>
@@ -215,6 +227,14 @@ const StaffTable = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Role update modal */}
+      <CreateRoleModal
+        open={openEditModal}
+        handleClose={handleCloseEditModal}
+        isUpdate={true}
+        staffDataUpdate={staffDataUpdate}
+      />
     </Card>
   )
 }

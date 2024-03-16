@@ -10,6 +10,7 @@ import { AxiosError } from 'axios'
 import { roleService } from 'src/@core/services/role/roleService'
 import { StaffPayload } from 'src/@core/services/role/createStaff'
 import { useCallback } from 'react'
+import { UpdateStaffI } from 'src/@core/services/role/updateStaff'
 
 //roll queries
 export const useAllRole = () => {
@@ -96,4 +97,34 @@ export const useStaffDeletion = () => {
       }
     }
   })
+}
+
+//update staff
+export const useStaffUpdate = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<any, unknown, { id: string; staffData: UpdateStaffI }, unknown>(
+    ({ id, staffData }) => roleService.updateStaff(id, staffData),
+    {
+      onSuccess: data => {
+        if (data) {
+          enqueueSnackbar('Staff updated successfully', {
+            variant: 'success'
+          })
+          queryClient.invalidateQueries(QUERY_KEYS.GET_ALL_STAFF)
+          // getAllStaffQuery.refetch()
+        }
+      },
+      onError: error => {
+        if (error) {
+          const axiosError = error as AxiosError<{ errors?: { message: string } }>
+          if (error) {
+            enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Staff update failed', {
+              variant: 'error'
+            })
+          }
+        }
+      }
+    }
+  )
 }
