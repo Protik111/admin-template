@@ -13,13 +13,11 @@ import { useCallback } from 'react'
 
 //roll queries
 export const useAllRole = () => {
-  const queryClient = useQueryClient()
-
   return useQuery(QUERY_KEYS.GET_ALL_ROLL, roleService.getAllRole, {
-    refetchOnMount: true,
-    onSuccess: data => {
-      queryClient.setQueryData(QUERY_KEYS.GET_ALL_ROLL, data)
-    },
+    refetchOnWindowFocus: 'always',
+    // onSuccess: data => {
+    //   queryClient.setQueryData(QUERY_KEYS.GET_ALL_ROLL, data)
+    // },
     onError: (error: Error) => {
       console.error('Error fetching roles:', error.message)
     }

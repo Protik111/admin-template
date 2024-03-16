@@ -57,8 +57,12 @@ interface State {
   firstName: string
   lastName: string
   showPassword: boolean
-  permissions: string[]
+  permissions: { id: string }[]
   phone: string
+}
+
+interface Perm {
+  permissions: { name: string; id: string }[]
 }
 
 const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
@@ -76,6 +80,22 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
     phone: ''
   })
 
+  const resetValues = () => {
+    setValues({
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: '',
+      showPassword: false,
+      permissions: [],
+      phone: ''
+    })
+  }
+
+  const [perm, setPerm] = useState<Perm>({
+    permissions: []
+  })
+
   const [error, setError] = useState({
     email: false,
     password: false,
@@ -87,6 +107,7 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
 
   const handleChange =
     (prop: keyof State) => (event: React.ChangeEvent<{ value: unknown }> | SelectChangeEvent<string[]>) => {
+      console.log('event', event.target.value)
       const value = event.target.value as string[] // Cast the value to string array
       setValues({ ...values, [prop]: value })
       setError({ ...error, [prop]: false })
@@ -109,29 +130,30 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
   useEffect(() => {
     if (isSuccess) {
       handleClose()
+      resetValues()
 
       //calling get all staff refetch function
       refetch()
     }
   }, [isSuccess])
 
-  /**
-   * @desc all roll will be implemented later in the state
-   */
+  const { isLoading: rolesLoading, isError: rolesError, data: allRoles, isFetched: isFetchedRoll } = useAllRole()
 
-  // const { isLoading, isError, data } = useAllRole()
+  console.log('allRoles', allRoles)
+  console.log('values', values)
 
-  // console.log('data', data)
-
-  // useEffect(() => {
-  //   if (data && data.roles && data.roles.length > 0) {
-  //     const permissionsArray = data.roles.flatMap((role: any) => Object.keys(role.permissions))
-  //     setValues(prevValues => ({
-  //       ...prevValues,
-  //       permissions: permissionsArray
-  //     }))
-  //   }
-  // }, [data])
+  useEffect(() => {
+    if (allRoles && allRoles?.roles && allRoles?.roles?.length > 0) {
+      const permissionsArray = allRoles.roles.map((role: any) => ({
+        name: role?.name,
+        id: role?._id
+      }))
+      setPerm(prevValues => ({
+        ...prevValues,
+        permissions: permissionsArray
+      }))
+    }
+  }, [isFetchedRoll])
 
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword })
@@ -230,11 +252,15 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
               id='demo-simple-select'
               name='permissions'
               value={values.permissions}
-              multiple // Enable multiple selection
+              multiple
               onChange={handleChange('permissions')}
               sx={{ marginBottom: 4 }}
             >
-              <MenuItem value='65bfb0846c34d40f8b798b87'>Admin Role</MenuItem>
+              {perm?.permissions?.map(permission => (
+                <MenuItem key={permission.id} value={permission.id}>
+                  {permission.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
 

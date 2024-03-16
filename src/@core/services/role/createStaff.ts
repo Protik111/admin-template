@@ -5,7 +5,7 @@ export interface StaffPayload {
   email: string
   firstName: string
   lastName: string
-  permission: string[]
+  permission: { id: string }[]
   password: string
 }
 

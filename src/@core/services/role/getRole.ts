@@ -4,7 +4,7 @@ export async function getAllRole(): Promise<any | null> {
   try {
     const response = await axiosInstance.get('/api/staff/role/get')
     if (response.status == 200) {
-      return await response.data
+      return response.data
     } else {
       console.log('Role fetch error')
       return null
