@@ -29,7 +29,7 @@ export const userSignIn = () => {
       onError: error => {
         const axiosError = error as AxiosError<{ errors?: { message: string } }>
         if (error) {
-          enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Ops.. Error on sign in. Try again!', {
+          enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Error on sign in. Try again!', {
             variant: 'error'
           })
         }
