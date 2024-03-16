@@ -72,3 +72,30 @@ export const useStaffCreate = () => {
     }
   )
 }
+
+//delete staff
+export const useStaffDeletion = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<any, unknown, string, unknown>(id => roleService.deleteStaff(id), {
+    onSuccess: data => {
+      if (data) {
+        enqueueSnackbar('Staff deleted successfully', {
+          variant: 'success'
+        })
+        queryClient.invalidateQueries(QUERY_KEYS.GET_ALL_STAFF)
+        // getAllStaffQuery.refetch()
+      }
+    },
+    onError: error => {
+      if (error) {
+        const axiosError = error as AxiosError<{ errors?: { message: string } }>
+        if (error) {
+          enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Staff deletion failed', {
+            variant: 'error'
+          })
+        }
+      }
+    }
+  })
+}

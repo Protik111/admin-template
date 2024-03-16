@@ -14,9 +14,16 @@ import CircularProgress from '@mui/material/CircularProgress'
 
 // ** Types Imports
 import { ThemeColor } from 'src/@core/layouts/types'
-import { useAllStaff } from 'src/@core/lib/react-query/role/roleQueries'
+import { useAllStaff, useStaffDeletion } from 'src/@core/lib/react-query/role/roleQueries'
 import { useEffect, useState } from 'react'
 import { LinearProgress } from '@mui/material'
+import { Grid } from 'mdi-material-ui'
+
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
 
 interface RowType {
   name: string
@@ -47,6 +54,7 @@ interface Staff {
     lastName: string
     email: string
     role: string
+    id: string
     phone: {
       countryCode: string
       number: string
@@ -55,8 +63,21 @@ interface Staff {
 }
 
 const StaffTable = () => {
-  const { isLoading, isError, data, isSuccess } = useAllStaff()
+  const { isLoading, isError, data, isSuccess, refetch: refetchAllStaff } = useAllStaff()
+  const { isLoading: deleteLoading, mutate: staffDelete, isSuccess: deleteSuccess } = useStaffDeletion()
+
   const [staffData, setStaffData] = useState([])
+  const [open, setOpen] = useState(false)
+  const [selectedId, setSelectedId] = useState('')
+
+  const handleClickOpen = (id: string) => {
+    setOpen(true)
+    setSelectedId(id)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
 
   // useEffect(() => {
   //   if (data && data.success && !staffData.length) {
@@ -64,9 +85,16 @@ const StaffTable = () => {
   //   }
   // }, [])
 
-  console.log('staffData', staffData)
+  const handleDeleteStaff = () => {
+    staffDelete(selectedId)
+  }
 
-  console.log('data', data)
+  useEffect(() => {
+    if (deleteSuccess) {
+      refetchAllStaff()
+      handleClose()
+    }
+  }, [deleteSuccess])
 
   const rows: RowType[] = [
     {
@@ -120,8 +148,6 @@ const StaffTable = () => {
     }
   ]
 
-  console.log('staffData', staffData)
-
   return (
     <Card>
       <TableContainer>
@@ -152,9 +178,14 @@ const StaffTable = () => {
                   <TableCell sx={{ textTransform: 'capitalize' }}>{staff?.user?.role}</TableCell>
                   <TableCell>{staff?.user?.phone?.countryCode + staff?.user?.phone?.number}</TableCell>
                   <TableCell>
-                    <Button color='error' variant='contained'>
-                      <span style={{ color: 'white' }}>Delete</span>
-                    </Button>
+                    <Box sx={{ display: 'flex', gap: '10px' }}>
+                      <Button onClick={() => handleClickOpen(staff?.user?.id)} color='error' variant='contained'>
+                        <span style={{ color: 'white' }}>Delete</span>
+                      </Button>
+                      <Button color='success' variant='contained'>
+                        <span style={{ color: 'white' }}>Update</span>
+                      </Button>
+                    </Box>
                   </TableCell>
                 </TableRow>
               ))
@@ -162,6 +193,28 @@ const StaffTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
+      >
+        <DialogTitle id='alert-dialog-title'>{'Are you sure to delete the user permanently?'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            Deleting staff from this panel will erase all the information related to the user.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button color='error' variant='contained' onClick={handleClose}>
+            Disagree
+          </Button>
+          <Button color='success' variant='contained' onClick={handleDeleteStaff} autoFocus>
+            {deleteLoading ? <CircularProgress size={22} color='secondary' /> : 'Agree'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   )
 }

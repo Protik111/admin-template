@@ -1,5 +1,5 @@
 import Typography, { TypographyProps } from '@mui/material/Typography'
-import { Button } from '@mui/material'
+import { Button, CircularProgress } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
@@ -62,7 +62,7 @@ interface State {
 }
 
 const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
-  const { mutate: createStaff, isSuccess } = useStaffCreate()
+  const { isLoading: createStaffLoading, mutate: createStaff, isSuccess } = useStaffCreate()
   const { isLoading, isError, data, refetch } = useAllStaff()
 
   // ** State
@@ -249,7 +249,8 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
             type='submit'
             // onClick={() => router.push('/')}
           >
-            Create Role
+            {createStaffLoading ? <CircularProgress size={22} color='secondary' /> : 'Create Role'}
+
             {/* {isLoading ? <CircularProgress size={'16px'} color='info' /> : 'Login'} */}
           </Button>
         </form>
