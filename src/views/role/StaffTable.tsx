@@ -10,9 +10,13 @@ import TableCell from '@mui/material/TableCell'
 import Typography from '@mui/material/Typography'
 import TableContainer from '@mui/material/TableContainer'
 import Button from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
 
 // ** Types Imports
 import { ThemeColor } from 'src/@core/layouts/types'
+import { useAllStaff } from 'src/@core/lib/react-query/role/roleQueries'
+import { useEffect, useState } from 'react'
+import { LinearProgress } from '@mui/material'
 
 interface RowType {
   name: string
@@ -28,58 +32,6 @@ interface StatusObj {
   }
 }
 
-const rows: RowType[] = [
-  {
-    name: 'Kazi',
-    email: 'eebsworth2m@sbwire.com',
-    role: 'Admin',
-    action: '',
-    phone: '01775454545'
-  },
-  {
-    name: 'Dollon',
-    email: 'eebsworth2m@sbwire.com',
-    role: 'Admin',
-    action: '',
-    phone: '01775454545'
-  },
-  {
-    name: 'Arefin',
-    email: 'eebsworth2m@sbwire.com',
-    role: 'Admin',
-    action: '',
-    phone: '01775454545'
-  },
-  {
-    name: 'Shakil',
-    email: 'eebsworth2m@sbwire.com',
-    role: 'Admin',
-    action: '',
-    phone: '01775454545'
-  },
-  {
-    name: 'Julfikar',
-    email: 'eebsworth2m@sbwire.com',
-    role: 'Admin',
-    action: '',
-    phone: '01775454545'
-  },
-  {
-    name: 'Mujhahid',
-    email: 'eebsworth2m@sbwire.com',
-    role: 'Admin',
-    action: '',
-    phone: '01775454545'
-  },
-  {
-    name: 'Protik',
-    email: 'eebsworth2m@sbwire.com',
-    role: 'Admin',
-    action: '',
-    phone: '01775454545'
-  }
-]
-
 const statusObj: StatusObj = {
   applied: { color: 'info' },
   rejected: { color: 'error' },
@@ -88,11 +40,88 @@ const statusObj: StatusObj = {
   professional: { color: 'success' }
 }
 
+interface Staff {
+  _id: string
+  user: {
+    firstName: string
+    lastName: string
+    email: string
+    role: string
+    phone: {
+      countryCode: string
+      number: string
+    }
+  }
+}
+
 const StaffTable = () => {
+  const { isLoading, isError, data } = useAllStaff()
+  const [staffData, setStaffData] = useState([])
+
+  useEffect(() => {
+    if (data && data.success) {
+      setStaffData(data.staffs)
+    }
+  }, [data])
+
+  const rows: RowType[] = [
+    {
+      name: 'Kazi',
+      email: 'eebsworth2m@sbwire.com',
+      role: 'Admin',
+      action: '',
+      phone: '01775454545'
+    },
+    {
+      name: 'Dollon',
+      email: 'eebsworth2m@sbwire.com',
+      role: 'Admin',
+      action: '',
+      phone: '01775454545'
+    },
+    {
+      name: 'Arefin',
+      email: 'eebsworth2m@sbwire.com',
+      role: 'Admin',
+      action: '',
+      phone: '01775454545'
+    },
+    {
+      name: 'Shakil',
+      email: 'eebsworth2m@sbwire.com',
+      role: 'Admin',
+      action: '',
+      phone: '01775454545'
+    },
+    {
+      name: 'Julfikar',
+      email: 'eebsworth2m@sbwire.com',
+      role: 'Admin',
+      action: '',
+      phone: '01775454545'
+    },
+    {
+      name: 'Mujhahid',
+      email: 'eebsworth2m@sbwire.com',
+      role: 'Admin',
+      action: '',
+      phone: '01775454545'
+    },
+    {
+      name: 'Protik',
+      email: 'eebsworth2m@sbwire.com',
+      role: 'Admin',
+      action: '',
+      phone: '01775454545'
+    }
+  ]
+
+  console.log('staffData', staffData)
+
   return (
     <Card>
       <TableContainer>
-        <Table sx={{ minWidth: 800 }} aria-label='table in dashboard'>
+        <Table aria-label='table in dashboard'>
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
@@ -103,23 +132,29 @@ const StaffTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row: RowType) => (
-              <TableRow hover key={row.name} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
-                <TableCell sx={{ py: theme => `${theme.spacing(0.5)} !important` }}>
-                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Typography sx={{ fontWeight: 500, fontSize: '0.875rem !important' }}>{row.name}</Typography>
-                  </Box>
-                </TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell>{row.role}</TableCell>
-                <TableCell>{row.phone}</TableCell>
-                <TableCell>
-                  <Button color='error' variant='contained'>
-                    <span style={{ color: 'white' }}>Delete</span>
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {isLoading ? (
+              <Box sx={{ width: '100%' }}>
+                <LinearProgress />
+              </Box>
+            ) : (
+              staffData?.map((staff: Staff) => (
+                <TableRow key={staff?._id} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
+                  <TableCell>
+                    <Typography sx={{ fontWeight: 500 }}>
+                      {staff?.user?.firstName} {staff?.user?.lastName}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>{staff?.user?.email}</TableCell>
+                  <TableCell>{staff?.user?.role}</TableCell>
+                  <TableCell>{staff?.user?.phone?.countryCode + staff?.user?.phone?.number}</TableCell>
+                  <TableCell>
+                    <Button color='error' variant='contained'>
+                      <span style={{ color: 'white' }}>Delete</span>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>

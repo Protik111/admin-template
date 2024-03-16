@@ -7,6 +7,9 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
+import parsePhoneNumber, { AsYouType, isValidPhoneNumber } from 'libphonenumber-js'
+import { PhoneInput } from 'react-international-phone'
+import 'react-international-phone/style.css'
 
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
@@ -32,7 +35,7 @@ import Facebook from 'mdi-material-ui/Facebook'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import { ChangeEvent, useState, MouseEvent, ReactNode, useEffect } from 'react'
-import { useAllRole } from 'src/@core/lib/react-query/role/roleQueries'
+import { useAllRole, useStaffCreate } from 'src/@core/lib/react-query/role/roleQueries'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -44,7 +47,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }))
 
 type CreateRoleModalProps = {
-  handleClose: (event: React.MouseEvent<HTMLButtonElement>) => void
+  handleClose: () => void
   open: boolean
 }
 
@@ -55,9 +58,11 @@ interface State {
   lastName: string
   showPassword: boolean
   permissions: string[]
+  phone: string
 }
 
 const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
+  const { mutate: createStaff, isSuccess } = useStaffCreate()
   // ** State
   const [values, setValues] = useState<State>({
     email: '',
@@ -65,7 +70,8 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
     firstName: '',
     lastName: '',
     showPassword: false,
-    permissions: []
+    permissions: [],
+    phone: ''
   })
 
   const [error, setError] = useState({
@@ -73,7 +79,8 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
     password: false,
     firstName: false,
     lastName: false,
-    permissions: false
+    permissions: false,
+    phone: false
   })
 
   const handleChange =
@@ -83,11 +90,31 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
       setError({ ...error, [prop]: false })
     }
 
-  const handleAddStaff = () => {
-    console.log('err')
+  const handleAddStaff = (e: React.FormEvent) => {
+    e.preventDefault()
+    const staffData = {
+      email: values.email,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      permission: values.permissions,
+      password: values.password
+    }
+    if (staffData) {
+      createStaff(staffData)
+    }
   }
 
-  const { isLoading, isError, data } = useAllRole()
+  useEffect(() => {
+    if (isSuccess) {
+      handleClose()
+    }
+  }, [isSuccess])
+
+  /**
+   * @desc all roll will be implemented later in the state
+   */
+
+  // const { isLoading, isError, data } = useAllRole()
 
   // console.log('data', data)
 
@@ -109,8 +136,6 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
     event.preventDefault()
   }
 
-  console.log('values', values)
-
   return (
     <BootstrapDialog onClose={handleClose} aria-labelledby='customized-dialog-title' open={open}>
       <DialogTitle sx={{ m: 0, p: 2 }} id='customized-dialog-title'>
@@ -129,7 +154,7 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
         <CloseIcon />
       </IconButton>
       <DialogContent dividers>
-        <form noValidate onSubmit={handleAddStaff} style={{ padding: '30px 20px' }}>
+        <form onSubmit={handleAddStaff} style={{ padding: '30px 20px' }}>
           <TextField
             autoFocus
             fullWidth
@@ -204,9 +229,13 @@ const CreateRoleModal = ({ handleClose, open }: CreateRoleModalProps) => {
               onChange={handleChange('permissions')}
               sx={{ marginBottom: 4 }}
             >
-              <MenuItem value='"65bfb0846c34d40f8b798b87"'>Admin Role</MenuItem>
+              <MenuItem value='65bfb0846c34d40f8b798b87'>Admin Role</MenuItem>
             </Select>
           </FormControl>
+
+          {/* <FormControl fullWidth>
+            <PhoneInput defaultCountry='bd' value={values.phone} onChange={phone => handleChange('phone')} />
+          </FormControl> */}
 
           <Button
             fullWidth
