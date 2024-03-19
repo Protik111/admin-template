@@ -83,8 +83,6 @@ const CreateRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
     phone: ''
   })
 
-  console.log('staffDataUpdate from updateModal', staffDataUpdate)
-
   const resetValues = () => {
     setValues({
       email: '',
@@ -144,8 +142,8 @@ const CreateRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
     }
 
     if (staffData && isUpdate) {
-      if (staffDataUpdate?._id) {
-        updateStaff(staffDataUpdate._id, staffData) // Pass the _id property along with staffData
+      if (staffDataUpdate?.user?._id) {
+        updateStaff({ id: staffDataUpdate?.user?._id, staffData }) // Pass the _id property along with staffData
       } else {
         console.error('No _id property found in staffDataUpdate')
       }
@@ -161,6 +159,12 @@ const CreateRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
       refetch()
     }
   }, [isSuccess])
+
+  useEffect(() => {
+    if (updateIsSuccess) {
+      handleClose()
+    }
+  }, [updateIsSuccess])
 
   const { isLoading: rolesLoading, isError: rolesError, data: allRoles, isFetched: isFetchedRoll } = useAllRole()
 
@@ -184,6 +188,8 @@ const CreateRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
   const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
   }
+
+  // console.log('staffDataUpdate from updateModal', staffDataUpdate)
 
   return (
     <BootstrapDialog onClose={handleClose} aria-labelledby='customized-dialog-title' open={open}>
