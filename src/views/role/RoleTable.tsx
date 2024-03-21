@@ -14,7 +14,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 
 // ** Types Imports
 import { ThemeColor } from 'src/@core/layouts/types'
-import { useAllStaff, useStaffDeletion } from 'src/@core/lib/react-query/role/roleQueries'
+import { useAllRole, useAllStaff, useStaffDeletion } from 'src/@core/lib/react-query/role/roleQueries'
 import { useEffect, useState } from 'react'
 import { LinearProgress } from '@mui/material'
 import { Grid } from 'mdi-material-ui'
@@ -25,30 +25,16 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import CreateRoleModal from 'src/@core/components/role/CreateRoleModal'
+import { format, compareAsc } from 'date-fns'
 
-interface RowType {
+interface RoleRowType {
+  _id: string
   name: string
-  email: string
-  role: string
-  phone: string
-  action: string
+  description: string
+  createdAt: string
 }
 
-interface StatusObj {
-  [key: string]: {
-    color: ThemeColor
-  }
-}
-
-const statusObj: StatusObj = {
-  applied: { color: 'info' },
-  rejected: { color: 'error' },
-  current: { color: 'primary' },
-  resigned: { color: 'warning' },
-  professional: { color: 'success' }
-}
-
-interface Staff {
+interface Role {
   _id: string
   user: {
     firstName: string
@@ -63,9 +49,13 @@ interface Staff {
   }
 }
 
-const StaffTable = () => {
+const RoleTable = () => {
   const { isLoading, isError, data, isSuccess, refetch: refetchAllStaff } = useAllStaff()
   const { isLoading: deleteLoading, mutate: staffDelete, isSuccess: deleteSuccess } = useStaffDeletion()
+
+  const { isLoading: rolesLoading, isError: rolesError, data: allRoles, isFetched: isFetchedRoll } = useAllRole()
+
+  console.log('allRoles', allRoles)
 
   const [staffDataUpdate, setStaffDataUpdate] = useState([])
   const [open, setOpen] = useState(false)
@@ -73,8 +63,8 @@ const StaffTable = () => {
 
   //modal for edit modal start
   const [openEditModal, setOpenEditModal] = useState(false)
-  const handleClickOpenEditModal = (staff: any) => {
-    setStaffDataUpdate(staff)
+  const handleClickOpenEditModal = (role: any) => {
+    setStaffDataUpdate(role)
     setOpenEditModal(true)
   }
   const handleCloseEditModal = () => {
@@ -115,9 +105,8 @@ const StaffTable = () => {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Phone</TableCell>
+              <TableCell>Desciption</TableCell>
+              <TableCell>Created At</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
@@ -127,22 +116,20 @@ const StaffTable = () => {
                 <LinearProgress />
               </Box>
             ) : (
-              data?.staffs?.map((staff: Staff) => (
-                <TableRow key={staff?._id} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
+              allRoles?.roles?.map((role: RoleRowType) => (
+                <TableRow key={role?._id} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
                   <TableCell>
-                    <Typography sx={{ fontWeight: 500 }}>
-                      {staff?.user?.firstName} {staff?.user?.lastName}
-                    </Typography>
+                    <Typography sx={{ fontWeight: 500 }}>{role?.name}</Typography>
                   </TableCell>
-                  <TableCell>{staff?.user?.email}</TableCell>
-                  <TableCell sx={{ textTransform: 'capitalize' }}>{staff?.user?.role}</TableCell>
-                  <TableCell>{staff?.user?.phone?.countryCode + staff?.user?.phone?.number}</TableCell>
+                  <TableCell>{role?.description}</TableCell>
+
+                  <TableCell>{format(new Date(role?.createdAt), 'MM/dd/yyyy')}</TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', gap: '10px' }}>
-                      <Button onClick={() => handleClickOpen(staff?.user?.id)} color='error' variant='contained'>
+                      <Button onClick={() => handleClickOpen(role?._id)} color='error' variant='contained'>
                         <span style={{ color: 'white' }}>Delete</span>
                       </Button>
-                      <Button onClick={() => handleClickOpenEditModal(staff)} color='success' variant='contained'>
+                      <Button onClick={() => handleClickOpenEditModal(role)} color='success' variant='contained'>
                         <span style={{ color: 'white' }}>Update</span>
                       </Button>
                     </Box>
@@ -187,4 +174,4 @@ const StaffTable = () => {
   )
 }
 
-export default StaffTable
+export default RoleTable

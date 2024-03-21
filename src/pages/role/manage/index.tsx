@@ -22,6 +22,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 import StaffTable from 'src/views/role/StaffTable'
 import { useState } from 'react'
 import CreateRoleModal from 'src/@core/components/role/CreateRoleModal'
+import RoleTable from 'src/views/role/RoleTable'
 
 const index = () => {
   const [open, setOpen] = useState(false)
@@ -38,11 +39,11 @@ const index = () => {
         <Grid container justifyContent='space-between' alignItems='center'>
           <Typography variant='h5'>Role Management</Typography>
           <Button size='large' variant='contained' onClick={handleClickOpen}>
-            Add Staff
+            Add Role
           </Button>
         </Grid>
         <Grid sx={{ mt: 5 }}>
-          <StaffTable />
+          <RoleTable />
         </Grid>
       </Grid>
 

@@ -35,7 +35,7 @@ const navigation = (): VerticalNavItemsType => {
       sectionTitle: 'Staff/Role Management'
     },
     {
-      title: 'Staff List',
+      title: 'Staff Management',
       icon: ManageAccountsIcon,
       path: '/role/staff'
     },
