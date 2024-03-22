@@ -184,3 +184,33 @@ export const useRoleDeletion = () => {
     }
   })
 }
+
+//update staff
+export const useRoleUpdate = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<any, unknown, { id: string; roleData: any }, unknown>(
+    ({ id, roleData }) => roleService.updateRole(id, roleData),
+    {
+      onSuccess: data => {
+        if (data) {
+          enqueueSnackbar('Role updated successfully', {
+            variant: 'success'
+          })
+          queryClient.invalidateQueries(QUERY_KEYS.GET_ALL_STAFF)
+          // getAllStaffQuery.refetch()
+        }
+      },
+      onError: error => {
+        if (error) {
+          const axiosError = error as AxiosError<{ errors?: { message: string } }>
+          if (error) {
+            enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Role update failed', {
+              variant: 'error'
+            })
+          }
+        }
+      }
+    }
+  )
+}

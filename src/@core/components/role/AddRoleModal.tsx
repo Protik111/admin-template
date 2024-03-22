@@ -39,6 +39,7 @@ import {
   useAllRole,
   useAllStaff,
   useCreateRole,
+  useRoleUpdate,
   useStaffCreate,
   useStaffUpdate
 } from 'src/@core/lib/react-query/role/roleQueries'
@@ -85,7 +86,7 @@ interface Perm {
 
 const AddRoleModal = ({ handleClose, open, isUpdate, roleDataUpdate }: CreateRoleModalProps) => {
   const { isLoading: createRoleLoading, mutate: createRole, isSuccess } = useCreateRole()
-  const { isLoading: updateStaffLoading, mutate: updateStaff, isSuccess: updateIsSuccess } = useStaffUpdate()
+  const { isLoading: updateRoleLoading, mutate: updateRole, isSuccess: updateIsSuccess } = useRoleUpdate()
   const {
     isLoading: rolesLoading,
     isError: rolesError,
@@ -93,8 +94,6 @@ const AddRoleModal = ({ handleClose, open, isUpdate, roleDataUpdate }: CreateRol
     isFetched: isFetchedRoll,
     refetch
   } = useAllRole()
-
-  console.log('roleDataUpdate', roleDataUpdate)
 
   // ** State
   const [values, setValues] = useState<State>({
@@ -161,7 +160,6 @@ const AddRoleModal = ({ handleClose, open, isUpdate, roleDataUpdate }: CreateRol
           }
         }))
       } else {
-        console.log('event', event.target.value)
         const value = event.target.value as string[] // Cast the value to string array
         setValues({ ...values, [prop]: value })
         setError({ ...error, [prop]: false })
@@ -171,13 +169,13 @@ const AddRoleModal = ({ handleClose, open, isUpdate, roleDataUpdate }: CreateRol
   const handleAddRole = (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (values?.name && values?.description) {
+    if (!isUpdate && values?.name && values?.description) {
       createRole(values)
     }
 
     if (values?.name && values?.description && isUpdate) {
       if (roleDataUpdate?._id) {
-        updateStaff({ id: roleDataUpdate?._id, values }) // Pass the _id property along with staffData
+        updateRole({ id: roleDataUpdate?._id, roleData: values }) // Pass the _id property along with staffData
       } else {
         console.error('No _id property found in staffDataUpdate')
       }
@@ -268,27 +266,30 @@ const AddRoleModal = ({ handleClose, open, isUpdate, roleDataUpdate }: CreateRol
           />
 
           <Grid direction='column' gap='10'>
-            {Object.entries(values?.permissions).map(([key, value]) => (
-              <Box key={key}>
-                <Typography variant='h6' sx={{ borderBottom: '1px solid #D3D3D3', textTransform: 'capitalize' }}>
-                  {key}
-                </Typography>
+            {values &&
+              values?.permissions &&
+              Object?.entries(values?.permissions).map(([key, value]) => (
+                <Box key={key}>
+                  <Typography variant='h6' sx={{ borderBottom: '1px solid #D3D3D3', textTransform: 'capitalize' }}>
+                    {key}
+                  </Typography>
 
-                {Object.entries(value).map(([permKey, permVal]) => (
-                  <FormControlLabel
-                    key={permKey}
-                    control={
-                      <Switch
-                        checked={permVal as boolean}
-                        onChange={handleChange('permissions', key, permKey, !permVal as boolean)}
-                        name='gilad'
+                  {value &&
+                    Object?.entries(value).map(([permKey, permVal]) => (
+                      <FormControlLabel
+                        key={permKey}
+                        control={
+                          <Switch
+                            checked={permVal as boolean}
+                            onChange={handleChange('permissions', key, permKey, !permVal as boolean)}
+                            name='gilad'
+                          />
+                        }
+                        label={permKey}
                       />
-                    }
-                    label={permKey}
-                  />
-                ))}
-              </Box>
-            ))}
+                    ))}
+                </Box>
+              ))}
           </Grid>
 
           <Box mt={5}>
@@ -300,7 +301,7 @@ const AddRoleModal = ({ handleClose, open, isUpdate, roleDataUpdate }: CreateRol
                 type='submit'
                 // onClick={() => router.push('/')}
               >
-                {updateStaffLoading ? <CircularProgress size={22} color='secondary' /> : 'Update Role'}
+                {updateRoleLoading ? <CircularProgress size={22} color='secondary' /> : 'Update Role'}
               </Button>
             ) : (
               <Button

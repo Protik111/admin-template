@@ -102,8 +102,6 @@ const RoleTable = () => {
     }
   }, [deleteSuccess])
 
-  console.log('allRoles', allRoles)
-
   return (
     <Card>
       <TableContainer>
