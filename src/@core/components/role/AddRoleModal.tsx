@@ -35,7 +35,13 @@ import Facebook from 'mdi-material-ui/Facebook'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import { ChangeEvent, useState, MouseEvent, ReactNode, useEffect } from 'react'
-import { useAllRole, useAllStaff, useStaffCreate, useStaffUpdate } from 'src/@core/lib/react-query/role/roleQueries'
+import {
+  useAllRole,
+  useAllStaff,
+  useCreateRole,
+  useStaffCreate,
+  useStaffUpdate
+} from 'src/@core/lib/react-query/role/roleQueries'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -78,9 +84,15 @@ interface Perm {
 }
 
 const AddRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: CreateRoleModalProps) => {
-  const { isLoading: createStaffLoading, mutate: createStaff, isSuccess } = useStaffCreate()
+  const { isLoading: createRoleLoading, mutate: createRole, isSuccess } = useCreateRole()
   const { isLoading: updateStaffLoading, mutate: updateStaff, isSuccess: updateIsSuccess } = useStaffUpdate()
-  const { isLoading, isError, data, refetch } = useAllStaff()
+  const {
+    isLoading: rolesLoading,
+    isError: rolesError,
+    data: allRoles,
+    isFetched: isFetchedRoll,
+    refetch
+  } = useAllRole()
 
   // ** State
   const [values, setValues] = useState<State>({
@@ -153,22 +165,16 @@ const AddRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: CreateRo
 
   console.log('vakk', values)
 
-  const handleAddStaff = (e: React.FormEvent) => {
+  const handleAddRole = (e: React.FormEvent) => {
     e.preventDefault()
-    const staffData = {
-      email: values.email,
-      firstName: values.firstName,
-      lastName: values.lastName,
-      permission: values.permissions,
-      password: values.password
-    }
-    if (staffData && !isUpdate) {
-      createStaff(staffData)
+
+    if (values?.name && values?.description) {
+      createRole(values)
     }
 
-    if (staffData && isUpdate) {
+    if (values?.name && values?.description && isUpdate) {
       if (staffDataUpdate?.user?._id) {
-        updateStaff({ id: staffDataUpdate?.user?._id, staffData }) // Pass the _id property along with staffData
+        updateStaff({ id: staffDataUpdate?.user?._id, values }) // Pass the _id property along with staffData
       } else {
         console.error('No _id property found in staffDataUpdate')
       }
@@ -190,8 +196,6 @@ const AddRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: CreateRo
       handleClose()
     }
   }, [updateIsSuccess])
-
-  const { isLoading: rolesLoading, isError: rolesError, data: allRoles, isFetched: isFetchedRoll } = useAllRole()
 
   useEffect(() => {
     if (allRoles && allRoles?.roles && allRoles?.roles?.length > 0) {
@@ -233,7 +237,7 @@ const AddRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: CreateRo
         <CloseIcon />
       </IconButton>
       <DialogContent dividers>
-        <form onSubmit={handleAddStaff} style={{ padding: '30px 20px' }}>
+        <form onSubmit={handleAddRole} style={{ padding: '30px 20px' }}>
           <TextField
             autoFocus
             fullWidth
@@ -303,7 +307,7 @@ const AddRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: CreateRo
                 type='submit'
                 // onClick={() => router.push('/')}
               >
-                {createStaffLoading ? <CircularProgress size={22} color='secondary' /> : 'Add Role'}
+                {createRoleLoading ? <CircularProgress size={22} color='secondary' /> : 'Add Role'}
               </Button>
             )}
           </Box>

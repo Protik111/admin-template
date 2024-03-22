@@ -11,6 +11,7 @@ import { roleService } from 'src/@core/services/role/roleService'
 import { StaffPayload } from 'src/@core/services/role/createStaff'
 import { useCallback } from 'react'
 import { UpdateStaffI } from 'src/@core/services/role/updateStaff'
+import { RolePayload } from 'src/@core/services/role/createRoll'
 
 //roll queries
 export const useAllRole = () => {
@@ -120,6 +121,33 @@ export const useStaffUpdate = () => {
           const axiosError = error as AxiosError<{ errors?: { message: string } }>
           if (error) {
             enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Staff update failed', {
+              variant: 'error'
+            })
+          }
+        }
+      }
+    }
+  )
+}
+
+export const useCreateRole = () => {
+  return useMutation<any, unknown, RolePayload, unknown>(
+    payload => {
+      return roleService.createRoll(payload)
+    },
+    {
+      onSuccess: data => {
+        if (data) {
+          enqueueSnackbar('Role created successfully', {
+            variant: 'success'
+          })
+        }
+      },
+      onError: error => {
+        if (error) {
+          const axiosError = error as AxiosError<{ errors?: { message: string } }>
+          if (error) {
+            enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Role creation failed', {
               variant: 'error'
             })
           }
