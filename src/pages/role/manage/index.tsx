@@ -23,6 +23,7 @@ import StaffTable from 'src/views/role/StaffTable'
 import { useState } from 'react'
 import CreateRoleModal from 'src/@core/components/role/CreateRoleModal'
 import RoleTable from 'src/views/role/RoleTable'
+import AddRoleModal from 'src/@core/components/role/AddRoleModal'
 
 const index = () => {
   const [open, setOpen] = useState(false)
@@ -48,7 +49,7 @@ const index = () => {
       </Grid>
 
       {/* Role create modal */}
-      <CreateRoleModal open={open} handleClose={handleClose} />
+      <AddRoleModal open={open} handleClose={handleClose} />
     </>
   )
 }

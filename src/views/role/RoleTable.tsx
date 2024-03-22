@@ -55,8 +55,6 @@ const RoleTable = () => {
 
   const { isLoading: rolesLoading, isError: rolesError, data: allRoles, isFetched: isFetchedRoll } = useAllRole()
 
-  console.log('allRoles', allRoles)
-
   const [staffDataUpdate, setStaffDataUpdate] = useState([])
   const [open, setOpen] = useState(false)
   const [selectedId, setSelectedId] = useState('')
