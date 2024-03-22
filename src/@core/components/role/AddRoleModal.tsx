@@ -56,7 +56,7 @@ type CreateRoleModalProps = {
   handleClose: () => void
   open: boolean
   isUpdate?: boolean
-  staffDataUpdate?: any
+  roleDataUpdate?: any
 }
 
 interface Permissions {
@@ -83,7 +83,7 @@ interface Perm {
   permissions: { name: string; id: string }[]
 }
 
-const AddRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: CreateRoleModalProps) => {
+const AddRoleModal = ({ handleClose, open, isUpdate, roleDataUpdate }: CreateRoleModalProps) => {
   const { isLoading: createRoleLoading, mutate: createRole, isSuccess } = useCreateRole()
   const { isLoading: updateStaffLoading, mutate: updateStaff, isSuccess: updateIsSuccess } = useStaffUpdate()
   const {
@@ -94,10 +94,12 @@ const AddRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: CreateRo
     refetch
   } = useAllRole()
 
+  console.log('roleDataUpdate', roleDataUpdate)
+
   // ** State
   const [values, setValues] = useState<State>({
-    name: isUpdate ? staffDataUpdate?.user?.email : '',
-    description: isUpdate ? staffDataUpdate?.description : '',
+    name: isUpdate ? roleDataUpdate?.name : '',
+    description: isUpdate ? roleDataUpdate?.description : '',
     permissions: {
       staff: { read: false, create: false, update: false, delete: false },
       role: { read: false, create: false, update: false, delete: false },
@@ -119,17 +121,20 @@ const AddRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: CreateRo
     })
   }
 
-  //   useEffect(() => {
-  //     setValues({
-  //       email: isUpdate ? staffDataUpdate?.user?.email : '',
-  //       password: '',
-  //       firstName: isUpdate ? staffDataUpdate?.user?.firstName : '',
-  //       lastName: isUpdate ? staffDataUpdate?.user?.lastName : '',
-  //       showPassword: false,
-  //       permissions: [],
-  //       phone: ''
-  //     })
-  //   }, [staffDataUpdate])
+  useEffect(() => {
+    setValues({
+      name: isUpdate ? roleDataUpdate?.name : '',
+      description: isUpdate ? roleDataUpdate?.description : '',
+      permissions: isUpdate
+        ? roleDataUpdate?.permissions
+        : {
+            staff: { read: false, create: false, update: false, delete: false },
+            role: { read: false, create: false, update: false, delete: false },
+            user: { read: false, create: false, update: false, delete: false },
+            blog: { read: false, create: false, update: false, delete: false }
+          }
+    })
+  }, [roleDataUpdate])
 
   //   const [perm, setPerm] = useState<Perm>({
   //     permissions: []
@@ -163,8 +168,6 @@ const AddRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: CreateRo
       }
     }
 
-  console.log('vakk', values)
-
   const handleAddRole = (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -173,8 +176,8 @@ const AddRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: CreateRo
     }
 
     if (values?.name && values?.description && isUpdate) {
-      if (staffDataUpdate?.user?._id) {
-        updateStaff({ id: staffDataUpdate?.user?._id, values }) // Pass the _id property along with staffData
+      if (roleDataUpdate?._id) {
+        updateStaff({ id: roleDataUpdate?._id, values }) // Pass the _id property along with staffData
       } else {
         console.error('No _id property found in staffDataUpdate')
       }

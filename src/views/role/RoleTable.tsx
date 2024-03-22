@@ -26,6 +26,7 @@ import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import CreateRoleModal from 'src/@core/components/role/CreateRoleModal'
 import { format, compareAsc } from 'date-fns'
+import AddRoleModal from 'src/@core/components/role/AddRoleModal'
 
 interface RoleRowType {
   _id: string
@@ -60,14 +61,14 @@ const RoleTable = () => {
     refetch: refetchStaff
   } = useAllRole()
 
-  const [staffDataUpdate, setStaffDataUpdate] = useState([])
+  const [roleDataUpdate, setRoleDataUpdate] = useState([])
   const [open, setOpen] = useState(false)
   const [selectedId, setSelectedId] = useState('')
 
   //modal for edit modal start
   const [openEditModal, setOpenEditModal] = useState(false)
   const handleClickOpenEditModal = (role: any) => {
-    setStaffDataUpdate(role)
+    setRoleDataUpdate(role)
     setOpenEditModal(true)
   }
   const handleCloseEditModal = () => {
@@ -169,11 +170,11 @@ const RoleTable = () => {
       </Dialog>
 
       {/* Role update modal */}
-      <CreateRoleModal
+      <AddRoleModal
         open={openEditModal}
         handleClose={handleCloseEditModal}
         isUpdate={true}
-        staffDataUpdate={staffDataUpdate}
+        roleDataUpdate={roleDataUpdate}
       />
     </Card>
   )
