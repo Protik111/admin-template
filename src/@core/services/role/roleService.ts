@@ -4,6 +4,7 @@ import { getAllStaffs } from './getAllStaffs'
 import { deleteStaff } from './deleteStaff'
 import { updateStaff } from './updateStaff'
 import { createRoll } from './createRoll'
+import { deleteRole } from './deleteRole'
 
 export const roleService = {
   getAllRole,
@@ -11,5 +12,6 @@ export const roleService = {
   getAllStaffs,
   deleteStaff,
   updateStaff,
-  createRoll
+  createRoll,
+  deleteRole
 }

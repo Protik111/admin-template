@@ -130,6 +130,7 @@ export const useStaffUpdate = () => {
   )
 }
 
+//create role
 export const useCreateRole = () => {
   return useMutation<any, unknown, RolePayload, unknown>(
     payload => {
@@ -155,4 +156,31 @@ export const useCreateRole = () => {
       }
     }
   )
+}
+
+//delete role
+export const useRoleDeletion = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<any, unknown, string, unknown>(id => roleService.deleteRole(id), {
+    onSuccess: data => {
+      if (data) {
+        enqueueSnackbar('Role deleted successfully', {
+          variant: 'success'
+        })
+        queryClient.invalidateQueries(QUERY_KEYS.GET_ALL_ROLL)
+        // getAllStaffQuery.refetch()
+      }
+    },
+    onError: error => {
+      if (error) {
+        const axiosError = error as AxiosError<{ errors?: { message: string } }>
+        if (error) {
+          enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Role deletion failed', {
+            variant: 'error'
+          })
+        }
+      }
+    }
+  })
 }

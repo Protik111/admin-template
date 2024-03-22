@@ -14,7 +14,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 
 // ** Types Imports
 import { ThemeColor } from 'src/@core/layouts/types'
-import { useAllRole, useAllStaff, useStaffDeletion } from 'src/@core/lib/react-query/role/roleQueries'
+import { useAllRole, useAllStaff, useRoleDeletion, useStaffDeletion } from 'src/@core/lib/react-query/role/roleQueries'
 import { useEffect, useState } from 'react'
 import { LinearProgress } from '@mui/material'
 import { Grid } from 'mdi-material-ui'
@@ -50,10 +50,15 @@ interface Role {
 }
 
 const RoleTable = () => {
-  const { isLoading, isError, data, isSuccess, refetch: refetchAllStaff } = useAllStaff()
-  const { isLoading: deleteLoading, mutate: staffDelete, isSuccess: deleteSuccess } = useStaffDeletion()
+  const { isLoading: deleteLoading, mutate: roleDelete, isSuccess: deleteSuccess } = useRoleDeletion()
 
-  const { isLoading: rolesLoading, isError: rolesError, data: allRoles, isFetched: isFetchedRoll } = useAllRole()
+  const {
+    isLoading: rolesLoading,
+    isError: rolesError,
+    data: allRoles,
+    isFetched: isFetchedRoll,
+    refetch: refetchStaff
+  } = useAllRole()
 
   const [staffDataUpdate, setStaffDataUpdate] = useState([])
   const [open, setOpen] = useState(false)
@@ -86,15 +91,17 @@ const RoleTable = () => {
   // }, [])
 
   const handleDeleteStaff = () => {
-    staffDelete(selectedId)
+    roleDelete(selectedId)
   }
 
   useEffect(() => {
     if (deleteSuccess) {
-      refetchAllStaff()
+      refetchStaff()
       handleClose()
     }
   }, [deleteSuccess])
+
+  console.log('allRoles', allRoles)
 
   return (
     <Card>
@@ -109,7 +116,7 @@ const RoleTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {isLoading ? (
+            {rolesLoading ? (
               <Box sx={{ width: '100%' }}>
                 <LinearProgress />
               </Box>
@@ -145,10 +152,10 @@ const RoleTable = () => {
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'
       >
-        <DialogTitle id='alert-dialog-title'>{'Are you sure to delete the user permanently?'}</DialogTitle>
+        <DialogTitle id='alert-dialog-title'>{'Are you sure to delete the role permanently?'}</DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
-            Deleting staff from this panel will erase all the information related to the user.
+            Deleting role from this panel will erase all the information related to the user.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
