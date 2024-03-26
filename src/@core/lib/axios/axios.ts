@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
-const BASE_URL = 'http://localhost:4000'
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
