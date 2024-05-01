@@ -1,40 +1,28 @@
-import Typography, { TypographyProps } from '@mui/material/Typography'
 import { Button, CircularProgress } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
 import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
 import parsePhoneNumber, { AsYouType, isValidPhoneNumber } from 'libphonenumber-js'
 import { PhoneInput } from 'react-international-phone'
 import 'react-international-phone/style.css'
 
-import Box from '@mui/material/Box'
-import Divider from '@mui/material/Divider'
-import Checkbox from '@mui/material/Checkbox'
 import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
-import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
-import { useTheme } from '@mui/material/styles'
-import { CardProps } from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
-import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
 
 import MenuItem from '@mui/material/MenuItem'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 
 // ** Icons Imports
-import Google from 'mdi-material-ui/Google'
-import Github from 'mdi-material-ui/Github'
-import Twitter from 'mdi-material-ui/Twitter'
-import Facebook from 'mdi-material-ui/Facebook'
+
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
-import { ChangeEvent, useState, MouseEvent, ReactNode, useEffect } from 'react'
+import { useState, MouseEvent, ReactNode, useEffect } from 'react'
 import { useAllRole, useAllStaff, useStaffCreate, useStaffUpdate } from 'src/@core/lib/react-query/role/roleQueries'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({

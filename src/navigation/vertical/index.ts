@@ -27,6 +27,9 @@ const navigation = (): VerticalNavItemsType => {
       path: '/account-settings'
     },
     {
+      sectionTitle: 'Blog Management'
+    },
+    {
       title: 'Blogs',
       icon: AccountCogOutline,
       path: '/blogs'
