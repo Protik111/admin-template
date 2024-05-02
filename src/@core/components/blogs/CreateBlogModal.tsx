@@ -33,6 +33,7 @@ import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import { useState, MouseEvent, ReactNode, useEffect } from 'react'
 import dynamic from 'next/dynamic'
+import { useAllTags } from 'src/@core/lib/react-query/blog/blogQueries'
 
 type CreateRoleModalProps = {
   handleClose: () => void
@@ -51,6 +52,11 @@ type State = {
   tags: string[]
 }
 
+type Tags = {
+  name: string
+  count: number
+}
+
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2)
@@ -61,6 +67,10 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }))
 
 const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: CreateRoleModalProps) => {
+  const { isLoading: isLoadingTag, isError, data: allTags, isFetched, refetch } = useAllTags()
+
+  console.log('allTags', allTags)
+
   // ** State
   const [value, setValue] = useState('')
   const [values, setValues] = useState<State>({
@@ -234,17 +244,18 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
                   labelId='permissions'
                   id='demo-simple-select'
                   name='permissions'
-                  value={['perm']}
+                  value={values.tags}
                   placeholder='Selec'
                   multiple
-                  //   onChange={handleChange('permissions')}
+                  onChange={handleChange('tags')}
                   sx={{ marginBottom: 8 }}
                 >
-                  {['Programming'].map((permission, i) => (
-                    <MenuItem key={i} value={'1'}>
-                      {permission}
-                    </MenuItem>
-                  ))}
+                  {!isLoadingTag &&
+                    allTags?.tags?.map((tag: Tags, i: number) => (
+                      <MenuItem key={i} value={tag?.name}>
+                        {tag?.name}
+                      </MenuItem>
+                    ))}
                 </Select>
               </FormControl>
 

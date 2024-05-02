@@ -19,6 +19,8 @@ export async function signIn(email: string, password: string): Promise<User | an
     password: password
   }
 
+  console.log('data', data)
+
   try {
     const response = await axiosInstance.post('/api/admin/login', data)
     if (response.status === 200) {
