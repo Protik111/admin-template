@@ -110,7 +110,6 @@ const CreateRoleModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
 
   const handleChange =
     (prop: keyof State) => (event: React.ChangeEvent<{ value: unknown }> | SelectChangeEvent<string[]>) => {
-      console.log('event', event.target.value)
       const value = event.target.value as string[] // Cast the value to string array
       setValues({ ...values, [prop]: value })
       setError({ ...error, [prop]: false })

@@ -84,12 +84,27 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
   })
 
   const handleChange =
-    (prop: keyof State, key?: string, permKey?: string, permVal?: boolean) =>
+    (prop: keyof State, key?: boolean) =>
     (event: React.ChangeEvent<{ value: unknown }> | SelectChangeEvent<string[]>) => {
-      const value = event.target.value as string[] // Cast the value to string array
-      setValues({ ...values, [prop]: value })
-      setError({ ...error, [prop]: false })
+      if (prop === 'isPublished') {
+        setValues({ ...values, [prop]: key !== undefined ? key : !values[prop] })
+        setError({ ...error, [prop]: false })
+      } else {
+        const value = event.target.value as string[] // Cast the value to string array
+        setValues({ ...values, [prop]: value })
+        setError({ ...error, [prop]: false })
+      }
     }
+
+  const handleDescriptionChange = (value: string) => {
+    setValues({ ...values, description: value })
+  }
+
+  const handleCreate = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    console.log('values', values)
+  }
 
   return (
     <BootstrapDialog fullScreen onClose={handleClose} aria-labelledby='customized-dialog-title' open={open}>
@@ -112,7 +127,7 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
         <CloseIcon />
       </IconButton>
       <DialogContent dividers>
-        <form onSubmit={() => console.log('Hello')} style={{ padding: '30px 20px' }}>
+        <form onSubmit={e => handleCreate(e)} style={{ padding: '30px 20px' }}>
           <Box sx={{ display: 'flex', gap: '15px' }}>
             <Box sx={{ width: '70%' }}>
               <TextField
@@ -135,7 +150,7 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
                 theme='snow'
                 // value={value}
                 value={values.description}
-                onChange={handleChange('title')}
+                onChange={handleDescriptionChange}
                 // onChange={setValue}
               />
             </Box>
@@ -175,12 +190,12 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
                 Publish Blog
               </Typography>
               <FormControlLabel
-                // key={permKey}
                 control={
                   <Switch
-                    checked={true}
-                    // onChange={handleChange('permissions', key, permKey, !permVal as boolean)}
-                    name='gilad'
+                    key={1}
+                    checked={values.isPublished as boolean}
+                    onChange={handleChange('isPublished', !values.isPublished)}
+                    name='isPublished'
                   />
                 }
                 label={'Public'}
@@ -191,8 +206,8 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
                 type='text'
                 id='title'
                 name='email'
-                // value={values.email}
-                // onChange={handleChange('email')}
+                value={values.slug}
+                onChange={handleChange('slug')}
                 label='Slug'
                 sx={{ marginBottom: 4 }}
                 required
@@ -203,9 +218,9 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
                 fullWidth
                 type='text'
                 id='title'
-                name='email'
-                // value={values.email}
-                // onChange={handleChange('email')}
+                name='metaTitle'
+                value={values.metaTitle}
+                onChange={handleChange('metaTitle')}
                 label='Meta Title'
                 sx={{ marginBottom: 4 }}
                 required
