@@ -45,7 +45,7 @@ type CreateRoleModalProps = {
 export type BlogState = {
   title: string
   description: string
-  thumbnail: File | ''
+  thumbnail: File | string
   isPublished: boolean
   slug: string
   metaTitle: string
@@ -122,7 +122,10 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
     const { title, description, thumbnail } = values
 
     if (title && description && thumbnail) {
-      createBlog({ ...values, thumbnail: values.thumbnail?.name })
+      if (thumbnail instanceof File) {
+        // Check if thumbnail is a File
+        createBlog({ ...values, thumbnail: thumbnail.name })
+      }
     }
 
     if (isSuccess) {
@@ -191,7 +194,12 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
                   height='200'
                   alt='Image'
                   style={{ borderRadius: '5px' }}
-                  src={values.thumbnail ? URL.createObjectURL(values.thumbnail) : '/images/profile.jpg'}
+                  src={
+                    values.thumbnail instanceof File
+                      ? URL.createObjectURL(values.thumbnail)
+                      : values.thumbnail || '/images/profile.jpg'
+                  }
+                  // src={values.thumbnail ? URL.createObjectURL(values.thumbnail) : '/images/profile.jpg'}
                 />
                 <label htmlFor='contained-button-file' style={{ marginTop: '5px' }}>
                   <Button variant='outlined' component='span'>
