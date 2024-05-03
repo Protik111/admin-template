@@ -26,7 +26,7 @@ import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import CreateRoleModal from 'src/@core/components/role/CreateRoleModal'
 import { useAllBlogs } from 'src/@core/lib/react-query/blog/blogQueries'
-import { BlogState } from './CreateBlogModal'
+import CreateBlogModal, { BlogState } from './CreateBlogModal'
 
 interface RowType {
   name: string
@@ -113,8 +113,6 @@ const BlogTable = () => {
     }
   }, [deleteSuccess])
 
-  console.log('data', allBlogs?.articles)
-
   return (
     <Card>
       <TableContainer>
@@ -152,11 +150,7 @@ const BlogTable = () => {
                   </TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', gap: '10px' }}>
-                      <Button
-                        //  onClick={() => handleClickOpen(article?.user?.id)}
-                        color='error'
-                        variant='contained'
-                      >
+                      <Button onClick={() => handleClickOpen(article?.id as string)} color='error' variant='contained'>
                         <span style={{ color: 'white' }}>Delete</span>
                       </Button>
                       <Button onClick={() => handleClickOpenEditModal(article)} color='success' variant='contained'>
@@ -193,12 +187,12 @@ const BlogTable = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Role update modal */}
-      <CreateRoleModal
+      {/* Blog update modal */}
+      <CreateBlogModal
         open={openEditModal}
         handleClose={handleCloseEditModal}
         isUpdate={true}
-        staffDataUpdate={staffDataUpdate}
+        blogDataUpdate={staffDataUpdate}
       />
     </Card>
   )

@@ -33,16 +33,17 @@ import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import { useState, MouseEvent, ReactNode, useEffect, ChangeEvent } from 'react'
 import dynamic from 'next/dynamic'
-import { useAllTags, useBlogCreate } from 'src/@core/lib/react-query/blog/blogQueries'
+import { useAllTags, useBlogCreate, useBlogUpdate } from 'src/@core/lib/react-query/blog/blogQueries'
 
-type CreateRoleModalProps = {
+type UpdateBlogModalProps = {
   handleClose: () => void
   open: boolean
   isUpdate?: boolean
-  staffDataUpdate?: any
+  blogDataUpdate?: any
 }
 
 export type BlogState = {
+  id?: string
   title: string
   description: string
   thumbnail: File | string
@@ -66,21 +67,34 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   }
 }))
 
-const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: CreateRoleModalProps) => {
+const CreateBlogModal = ({ handleClose, open, isUpdate, blogDataUpdate }: UpdateBlogModalProps) => {
   const { isLoading: isLoadingTag, isError, data: allTags, isFetched, refetch } = useAllTags()
   const { isLoading: createBlogLoading, mutate: createBlog, isSuccess } = useBlogCreate()
+  const { isLoading: updateBlogLoading, mutate: updateBlog, isSuccess: blogIsSuccess } = useBlogUpdate()
 
   // ** State
   const [value, setValue] = useState('')
   const [values, setValues] = useState<BlogState>({
-    title: isUpdate ? staffDataUpdate?.user?.email : '',
-    description: '',
-    thumbnail: '',
-    isPublished: false,
-    slug: '',
-    metaTitle: '',
-    tags: []
+    title: isUpdate ? blogDataUpdate?.title : '',
+    description: isUpdate ? blogDataUpdate?.description : '',
+    thumbnail: isUpdate ? blogDataUpdate?.thumbnail : '',
+    isPublished: isUpdate ? blogDataUpdate?.isPublished : false,
+    slug: isUpdate ? blogDataUpdate?.slug : '',
+    metaTitle: isUpdate ? blogDataUpdate?.metaTitle : '',
+    tags: isUpdate ? blogDataUpdate?.tags : []
   })
+
+  useEffect(() => {
+    setValues({
+      title: isUpdate ? blogDataUpdate?.title : '',
+      description: isUpdate ? blogDataUpdate?.description : '',
+      thumbnail: isUpdate ? blogDataUpdate?.thumbnail : '',
+      isPublished: isUpdate ? blogDataUpdate?.isPublished : false,
+      slug: isUpdate ? blogDataUpdate?.slug : '',
+      metaTitle: isUpdate ? blogDataUpdate?.metaTitle : '',
+      tags: isUpdate ? blogDataUpdate?.tags : []
+    })
+  }, [blogDataUpdate])
 
   const [error, setError] = useState({
     title: false,
@@ -121,17 +135,34 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
 
     const { title, description, thumbnail } = values
 
-    if (title && description && thumbnail) {
+    if (title && description && thumbnail && !isUpdate) {
       if (thumbnail instanceof File) {
         // Check if thumbnail is a File
         createBlog({ ...values, thumbnail: thumbnail.name })
+        handleClose()
+      }
+    }
+
+    if (title && description && thumbnail && isUpdate) {
+      if (thumbnail instanceof File) {
+        // Check if thumbnail is a File
+        updateBlog({ id: blogDataUpdate?._id, blogData: { ...values, thumbnail: thumbnail.name } })
       }
     }
 
     if (isSuccess) {
-      handleClose()
     }
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+      handleClose()
+      // resetValues()
+
+      //calling get all staff refetch function
+      refetch()
+    }
+  }, [isSuccess])
 
   return (
     <BootstrapDialog fullScreen onClose={handleClose} aria-labelledby='customized-dialog-title' open={open}>
@@ -279,15 +310,27 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
               </FormControl>
 
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button
-                  // fullWidth
-                  size='large'
-                  variant='contained'
-                  type='submit'
-                  // onClick={() => router.push('/')}
-                >
-                  {createBlogLoading ? <CircularProgress size={22} color='secondary' /> : 'Create Blog'}
-                </Button>
+                {isUpdate ? (
+                  <Button
+                    // fullWidth
+                    size='large'
+                    variant='contained'
+                    type='submit'
+                    // onClick={() => router.push('/')}
+                  >
+                    {updateBlogLoading ? <CircularProgress size={22} color='secondary' /> : 'Update Blog'}
+                  </Button>
+                ) : (
+                  <Button
+                    // fullWidth
+                    size='large'
+                    variant='contained'
+                    type='submit'
+                    // onClick={() => router.push('/')}
+                  >
+                    {createBlogLoading ? <CircularProgress size={22} color='secondary' /> : 'Create Blog'}
+                  </Button>
+                )}
               </Box>
             </Box>
           </Box>

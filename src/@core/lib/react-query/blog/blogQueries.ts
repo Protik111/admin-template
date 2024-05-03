@@ -76,3 +76,33 @@ export const useAllBlogs = () => {
     }
   )
 }
+
+//update staff
+export const useBlogUpdate = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<any, unknown, { id: string; blogData: BlogState }, unknown>(
+    ({ id, blogData }) => blogService.updateBlog(id, blogData),
+    {
+      onSuccess: data => {
+        if (data) {
+          enqueueSnackbar('Blog updated successfully', {
+            variant: 'success'
+          })
+          queryClient.invalidateQueries(QUERY_KEYS.GET_ALL_BLOGS)
+          // getAllStaffQuery.refetch()
+        }
+      },
+      onError: error => {
+        if (error) {
+          const axiosError = error as AxiosError<{ errors?: { message: string } }>
+          if (error) {
+            enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Blog update failed', {
+              variant: 'error'
+            })
+          }
+        }
+      }
+    }
+  )
+}
