@@ -1,6 +1,7 @@
 import { Button, Grid, Typography } from '@mui/material'
 import { Box } from 'mdi-material-ui'
 import { useState } from 'react'
+import BlogTable from 'src/@core/components/blogs/BlogTable'
 import CreateBlogModal from 'src/@core/components/blogs/CreateBlogModal'
 import StaffTable from 'src/views/role/StaffTable'
 
@@ -23,7 +24,7 @@ const index = () => {
           </Button>
         </Grid>
         <Grid sx={{ mt: 5 }}>
-          <StaffTable />
+          <BlogTable />
         </Grid>
       </Grid>
       {/* Role create modal */}

@@ -5,6 +5,7 @@ import { enqueueSnackbar } from 'notistack'
 import { blogService } from 'src/@core/services/blog/blogService'
 import { BlogState } from 'src/@core/components/blogs/CreateBlogModal'
 import { AxiosError } from 'axios'
+import { BlogPayload } from 'src/@core/services/blog/getAllBlogs'
 
 //blog queries
 export const useAllTags = () => {
@@ -43,6 +44,32 @@ export const useBlogCreate = () => {
             enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Error creating blog', {
               variant: 'error'
             })
+          }
+        }
+      }
+    }
+  )
+}
+
+export const useAllBlogs = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<any, unknown, BlogPayload, unknown>(
+    payload => {
+      return blogService.getAllBlogs(payload)
+    },
+    {
+      onSuccess: data => {
+        if (data) {
+          queryClient.invalidateQueries(QUERY_KEYS.GET_ALL_BLOGS)
+          // getAllStaffQuery.refetch()
+        }
+      },
+      onError: error => {
+        if (error) {
+          const axiosError = error as AxiosError<{ errors?: { message: string } }>
+          if (error) {
+            console.log('Error fetching blog', axiosError?.response?.data?.errors?.message)
           }
         }
       }
