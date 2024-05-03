@@ -33,7 +33,7 @@ import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import { useState, MouseEvent, ReactNode, useEffect, ChangeEvent } from 'react'
 import dynamic from 'next/dynamic'
-import { useAllTags } from 'src/@core/lib/react-query/blog/blogQueries'
+import { useAllTags, useBlogCreate } from 'src/@core/lib/react-query/blog/blogQueries'
 
 type CreateRoleModalProps = {
   handleClose: () => void
@@ -42,7 +42,7 @@ type CreateRoleModalProps = {
   staffDataUpdate?: any
 }
 
-type State = {
+export type BlogState = {
   title: string
   description: string
   thumbnail: File | ''
@@ -68,12 +68,11 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: CreateRoleModalProps) => {
   const { isLoading: isLoadingTag, isError, data: allTags, isFetched, refetch } = useAllTags()
-
-  console.log('allTags', allTags)
+  const { isLoading: createBlogLoading, mutate: createBlog, isSuccess } = useBlogCreate()
 
   // ** State
   const [value, setValue] = useState('')
-  const [values, setValues] = useState<State>({
+  const [values, setValues] = useState<BlogState>({
     title: isUpdate ? staffDataUpdate?.user?.email : '',
     description: '',
     thumbnail: '',
@@ -94,7 +93,7 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
   })
 
   const handleChange =
-    (prop: keyof State, key?: boolean) =>
+    (prop: keyof BlogState, key?: boolean) =>
     (event: React.ChangeEvent<{ value: unknown }> | SelectChangeEvent<string[]>) => {
       if (prop === 'isPublished') {
         setValues({ ...values, [prop]: key !== undefined ? key : !values[prop] })
@@ -120,7 +119,15 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault()
 
-    console.log('values', values)
+    const { title, description, thumbnail } = values
+
+    if (title && description && thumbnail) {
+      createBlog({ ...values, thumbnail: values.thumbnail?.name })
+    }
+
+    if (isSuccess) {
+      handleClose()
+    }
   }
 
   return (
@@ -271,7 +278,7 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
                   type='submit'
                   // onClick={() => router.push('/')}
                 >
-                  Create Blog
+                  {createBlogLoading ? <CircularProgress size={22} color='secondary' /> : 'Create Blog'}
                 </Button>
               </Box>
             </Box>

@@ -1,7 +1,10 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery, UseMutateFunction } from 'react-query'
 import { QUERY_KEYS } from '../queryKeys'
+import { enqueueSnackbar } from 'notistack'
 
 import { blogService } from 'src/@core/services/blog/blogService'
+import { BlogState } from 'src/@core/components/blogs/CreateBlogModal'
+import { AxiosError } from 'axios'
 
 //blog queries
 export const useAllTags = () => {
@@ -14,4 +17,35 @@ export const useAllTags = () => {
       console.error('Error fetching tags:', error.message)
     }
   })
+}
+
+export const useBlogCreate = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<any, unknown, BlogState, unknown>(
+    payload => {
+      return blogService.createBlog(payload)
+    },
+    {
+      onSuccess: data => {
+        if (data) {
+          enqueueSnackbar('Blog created successfully', {
+            variant: 'success'
+          })
+          queryClient.invalidateQueries(QUERY_KEYS.GET_ALL_STAFF)
+          // getAllStaffQuery.refetch()
+        }
+      },
+      onError: error => {
+        if (error) {
+          const axiosError = error as AxiosError<{ errors?: { message: string } }>
+          if (error) {
+            enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Error creating blog', {
+              variant: 'error'
+            })
+          }
+        }
+      }
+    }
+  )
 }
