@@ -31,7 +31,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
-import { useState, MouseEvent, ReactNode, useEffect } from 'react'
+import { useState, MouseEvent, ReactNode, useEffect, ChangeEvent } from 'react'
 import dynamic from 'next/dynamic'
 import { useAllTags } from 'src/@core/lib/react-query/blog/blogQueries'
 
@@ -45,7 +45,7 @@ type CreateRoleModalProps = {
 type State = {
   title: string
   description: string
-  thumbnail: string
+  thumbnail: File | ''
   isPublished: boolean
   slug: string
   metaTitle: string
@@ -76,7 +76,7 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
   const [values, setValues] = useState<State>({
     title: isUpdate ? staffDataUpdate?.user?.email : '',
     description: '',
-    thumbnail: isUpdate ? staffDataUpdate?.user?.firstName : '',
+    thumbnail: '',
     isPublished: false,
     slug: '',
     metaTitle: '',
@@ -108,6 +108,13 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
 
   const handleDescriptionChange = (value: string) => {
     setValues({ ...values, description: value })
+  }
+
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0]
+      setValues({ ...values, thumbnail: file })
+    }
   }
 
   const handleCreate = (e: React.FormEvent) => {
@@ -158,10 +165,8 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
                 style={{ height: '400px' }}
                 placeholder='Blog description'
                 theme='snow'
-                // value={value}
                 value={values.description}
                 onChange={handleDescriptionChange}
-                // onChange={setValue}
               />
             </Box>
             <Box>
@@ -177,20 +182,19 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, staffDataUpdate }: Creat
                 <img
                   width='220'
                   height='200'
-                  // className={classes.img}
                   alt='Image'
-                  src={'/images/profile.jpg'}
+                  style={{ borderRadius: '5px' }}
+                  src={values.thumbnail ? URL.createObjectURL(values.thumbnail) : '/images/profile.jpg'}
                 />
                 <label htmlFor='contained-button-file' style={{ marginTop: '5px' }}>
                   <Button variant='outlined' component='span'>
-                    Select Image
                     <input
                       accept='image/*'
-                      // className={classes.input}
                       id='contained-button-file'
+                      style={{ background: 'transperant' }}
                       multiple
                       type='file'
-                      // onChange={this.handleUploadClick}
+                      onChange={handleImageChange}
                     />
                   </Button>
                 </label>
