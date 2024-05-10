@@ -154,11 +154,11 @@ const BlogTable = () => {
                   </TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', gap: '10px' }}>
-                      <Button onClick={() => handleClickOpen(article?._id as string)} color='error' variant='contained'>
-                        <span style={{ color: 'white' }}>Delete</span>
-                      </Button>
                       <Button onClick={() => handleClickOpenEditModal(article)} color='success' variant='contained'>
                         <span style={{ color: 'white' }}>Update</span>
+                      </Button>
+                      <Button onClick={() => handleClickOpen(article?._id as string)} color='error' variant='contained'>
+                        <span style={{ color: 'white' }}>Delete</span>
                       </Button>
                     </Box>
                   </TableCell>

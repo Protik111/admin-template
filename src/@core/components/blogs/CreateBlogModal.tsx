@@ -138,7 +138,7 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, blogDataUpdate }: Update
     if (title && description && thumbnail && !isUpdate) {
       if (thumbnail instanceof File) {
         // Check if thumbnail is a File
-        createBlog({ ...values, thumbnail: thumbnail.name })
+        createBlog({ ...values, thumbnail: thumbnail })
         handleClose()
       }
     }
