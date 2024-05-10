@@ -25,7 +25,7 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import CreateRoleModal from 'src/@core/components/role/CreateRoleModal'
-import { useAllBlogs } from 'src/@core/lib/react-query/blog/blogQueries'
+import { useAllBlogs, useBlogDeletion } from 'src/@core/lib/react-query/blog/blogQueries'
 import CreateBlogModal, { BlogState } from './CreateBlogModal'
 
 interface RowType {
@@ -67,19 +67,20 @@ interface Staff {
 
 const BlogTable = () => {
   const { isLoading: getBlogLoading, data: allBlogs, mutate: getAllBlogs, isSuccess } = useAllBlogs()
-  const { isLoading: deleteLoading, mutate: staffDelete, isSuccess: deleteSuccess } = useStaffDeletion()
+  const { isLoading: deleteLoading, mutate: blogDelete, isSuccess: deleteSuccess } = useBlogDeletion()
 
   useEffect(() => {
     getAllBlogs({ page: 1, limit: 10, state: 'all', platform: 'brainsbin' })
-  }, [])
+  }, [deleteSuccess])
 
-  const [staffDataUpdate, setStaffDataUpdate] = useState([])
+  const [blogDataUpdate, setBlogDataUpdate] = useState([])
   const [open, setOpen] = useState(false)
   const [selectedId, setSelectedId] = useState('')
   //modal for edit modal start
   const [openEditModal, setOpenEditModal] = useState(false)
-  const handleClickOpenEditModal = (staff: any) => {
-    setStaffDataUpdate(staff)
+
+  const handleClickOpenEditModal = (blog: any) => {
+    setBlogDataUpdate(blog)
     setOpenEditModal(true)
   }
   const handleCloseEditModal = () => {
@@ -102,8 +103,10 @@ const BlogTable = () => {
   //   }
   // }, [])
 
-  const handleDeleteStaff = () => {
-    staffDelete(selectedId)
+  //delete blog
+  const handleDeleteBlog = () => {
+    console.log('s', selectedId)
+    blogDelete(selectedId)
   }
 
   useEffect(() => {
@@ -151,7 +154,7 @@ const BlogTable = () => {
                   </TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', gap: '10px' }}>
-                      <Button onClick={() => handleClickOpen(article?.id as string)} color='error' variant='contained'>
+                      <Button onClick={() => handleClickOpen(article?._id as string)} color='error' variant='contained'>
                         <span style={{ color: 'white' }}>Delete</span>
                       </Button>
                       <Button onClick={() => handleClickOpenEditModal(article)} color='success' variant='contained'>
@@ -172,17 +175,17 @@ const BlogTable = () => {
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'
       >
-        <DialogTitle id='alert-dialog-title'>{'Are you sure to delete the user permanently?'}</DialogTitle>
+        <DialogTitle id='alert-dialog-title'>{'Are you sure to delete the blog permanently?'}</DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
-            Deleting staff from this panel will erase all the information related to the user.
+            Deleting blog from this panel will erase all the information related to this blog.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button color='error' variant='contained' onClick={handleClose}>
             Disagree
           </Button>
-          <Button color='success' variant='contained' onClick={handleDeleteStaff} autoFocus>
+          <Button color='success' variant='contained' onClick={handleDeleteBlog} autoFocus>
             {deleteLoading ? <CircularProgress size={22} color='secondary' /> : 'Agree'}
           </Button>
         </DialogActions>
@@ -193,7 +196,7 @@ const BlogTable = () => {
         open={openEditModal}
         handleClose={handleCloseEditModal}
         isUpdate={true}
-        blogDataUpdate={staffDataUpdate}
+        blogDataUpdate={blogDataUpdate}
       />
     </Card>
   )

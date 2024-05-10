@@ -43,7 +43,7 @@ type UpdateBlogModalProps = {
 }
 
 export type BlogState = {
-  id?: string
+  _id?: string
   title: string
   description: string
   thumbnail: File | string

@@ -7,7 +7,7 @@ import { BlogState } from 'src/@core/components/blogs/CreateBlogModal'
 import { AxiosError } from 'axios'
 import { BlogPayload } from 'src/@core/services/blog/getAllBlogs'
 
-//blog queries
+//get all tags
 export const useAllTags = () => {
   return useQuery(QUERY_KEYS.GET_ALL_TAGS, blogService.getAllTags, {
     refetchOnWindowFocus: 'always',
@@ -20,6 +20,7 @@ export const useAllTags = () => {
   })
 }
 
+//blog create
 export const useBlogCreate = () => {
   const queryClient = useQueryClient()
 
@@ -51,6 +52,7 @@ export const useBlogCreate = () => {
   )
 }
 
+//get all blogs
 export const useAllBlogs = () => {
   const queryClient = useQueryClient()
 
@@ -106,4 +108,31 @@ export const useBlogUpdate = () => {
       }
     }
   )
+}
+
+//delete blog with id
+export const useBlogDeletion = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<any, unknown, string, unknown>(id => blogService.deleteBlog(id), {
+    onSuccess: data => {
+      if (data) {
+        enqueueSnackbar('Blog deleted successfully', {
+          variant: 'success'
+        })
+        queryClient.invalidateQueries(QUERY_KEYS.GET_ALL_BLOGS)
+        // getAllStaffQuery.refetch()
+      }
+    },
+    onError: error => {
+      if (error) {
+        const axiosError = error as AxiosError<{ errors?: { message: string } }>
+        if (error) {
+          enqueueSnackbar(axiosError?.response?.data?.errors?.message ?? 'Blog deletion failed', {
+            variant: 'error'
+          })
+        }
+      }
+    }
+  })
 }
