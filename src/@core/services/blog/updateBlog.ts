@@ -12,6 +12,7 @@ export async function updateBlog(id: string, roleData: BlogState): Promise<any |
     }
   } catch (error) {
     console.log('Blog update failed')
-    return null
+    // return error
+    throw error
   }
 }

@@ -149,9 +149,6 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, blogDataUpdate }: Update
         updateBlog({ id: blogDataUpdate?._id, blogData: { ...values, thumbnail: thumbnail.name } })
       }
     }
-
-    if (isSuccess) {
-    }
   }
 
   useEffect(() => {
@@ -163,6 +160,12 @@ const CreateBlogModal = ({ handleClose, open, isUpdate, blogDataUpdate }: Update
       refetch()
     }
   }, [isSuccess])
+
+  useEffect(() => {
+    if (blogIsSuccess) {
+      handleClose()
+    }
+  }, [blogIsSuccess])
 
   return (
     <BootstrapDialog fullScreen onClose={handleClose} aria-labelledby='customized-dialog-title' open={open}>

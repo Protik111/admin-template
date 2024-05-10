@@ -124,6 +124,7 @@ const BlogTable = () => {
               <TableCell>Description</TableCell>
               <TableCell>Meta Title</TableCell>
               <TableCell>Public</TableCell>
+              <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

@@ -85,7 +85,8 @@ export const useBlogUpdate = () => {
     ({ id, blogData }) => blogService.updateBlog(id, blogData),
     {
       onSuccess: data => {
-        if (data) {
+        console.log('data', data)
+        if (data?.success) {
           enqueueSnackbar('Blog updated successfully', {
             variant: 'success'
           })
